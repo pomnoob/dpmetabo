@@ -7,10 +7,34 @@ This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute
 
 Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
 
-```{r}
+```{r data_import}
 library(tidyverse)
-library(MetaboAnalystR)
+#import mean concentraiton data in postive mode
+posmean_sub <- read_csv("posmean_sub.csv")
+#import compound id data file
+pos_comid <- read_csv("pos_comid.csv")
+#select subjects only, exclude QC and Mean values
+posmean_eq <- select(posmean_sub,id,matches("^[ABCD]"))
+#Dataset with group A and B
+posmean_ab <- select(posmean_sub,id,matches("^[AB]"))
+#Dataset with group A and C
+posmean_ac <- select(posmean_sub,id,matches("^[AC]"))
+#Dataset with group A and D
+posmean_ad <- select(posmean_sub,id,matches("^[AD]"))
+#Dataset with group B and C
+posmean_bc <- select(posmean_sub,id,matches("^[BC]"))
+#Dataset with group B and D
+posmean_bd <- select(posmean_sub,id,matches("^[BD]"))
+#Dataset with group C and D
+posmean_cd <- select(posmean_sub,id,matches("^[CD]"))
 ```
+
+```{r data-summary}
+
+
+
+```
+
 
 情况比较特别
 Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
