@@ -7,26 +7,28 @@ This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute
 
 Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
 
-```{r data_import}
+```{r transpose}
 library(tidyverse)
 #import mean concentraiton data in postive mode
 posmean_sub <- read_csv("posmean_sub.csv")
 #import compound id data file
 pos_comid <- read_csv("pos_comid.csv")
 #select subjects only, exclude QC and Mean values
-posmean_eq <- select(posmean_sub,id,matches("^[ABCD]"))
-#Dataset with group A and B
-posmean_ab <- select(posmean_sub,id,matches("^[AB]"))
-#Dataset with group A and C
-posmean_ac <- select(posmean_sub,id,matches("^[AC]"))
-#Dataset with group A and D
-posmean_ad <- select(posmean_sub,id,matches("^[AD]"))
-#Dataset with group B and C
-posmean_bc <- select(posmean_sub,id,matches("^[BC]"))
-#Dataset with group B and D
-posmean_bd <- select(posmean_sub,id,matches("^[BD]"))
-#Dataset with group C and D
-posmean_cd <- select(posmean_sub,id,matches("^[CD]"))
+posmean_eq <- dplyr::select(posmean_sub,id,matches("^[ABCD]"))
+#Transpose data frame:subjects in row
+posmean <- posmean_eq %>%
+  rename(metid=id) %>%
+  gather(subid,value,-metid) %>%
+  spread(metid,value)
+#Change format of subject id and add treatment class for each row
+subid2 <- posmean$subid %>% str_replace("[0-9][0-9]_pos\\.[ABCD]","_")
+treat <- rep(c("Adiet","Bdiet","Cdiet","Ddiet"),times=c(16,16,18,18))
+posmean_group <- posmean %>% dplyr::select(-subid) %>% add_column(subid=subid2,treatment=treat) %>% dplyr::select(subid,treatment,everything())
+```
+
+```{r normalization}
+library(MetaboAnalystR)
+
 ```
 
 ```{r data-summary}
