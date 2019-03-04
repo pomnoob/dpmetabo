@@ -28,7 +28,13 @@ posmean_group <- posmean %>% dplyr::select(-subid) %>% add_column(subid=subid2,t
 
 ```{r normalization}
 library(MetaboAnalystR)
-
+write_csv(posmean_group,"posmean_group.csv")
+mSet<-InitDataObjects("conc", "stat", FALSE)
+mSet<-Read.TextData(mSet, "posmean_group.csv", "rowu", "disc");
+mSet<-SanityCheckData(mSet)
+mSet<-Normalization(mSet, "CompNorm", "LogNorm", "AutoNorm", ref="722", ratio=FALSE, ratioNum=20)
+mSet<-PlotNormSummary(mSet, "norm_0_", "png", 72, width=NA)
+mSet<-PlotSampleNormSummary(mSet, "snorm_0_", "png", 72, width=NA)
 ```
 
 ```{r data-summary}
@@ -38,9 +44,3 @@ library(MetaboAnalystR)
 ```
 
 
-情况比较特别
-Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
-
-When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
-
-The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
