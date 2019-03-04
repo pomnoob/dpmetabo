@@ -29,14 +29,19 @@ posmean_group <- posmean %>% dplyr::select(-subid) %>% add_column(subid=subid2,t
 ```{r normalization}
 library(MetaboAnalystR)
 write_csv(posmean_group,"posmean_group.csv")
+#set up method project 
 mSet<-InitDataObjects("conc", "stat", FALSE)
+#samples in row not paired
 mSet<-Read.TextData(mSet, "posmean_group.csv", "rowu", "disc");
 mSet<-SanityCheckData(mSet)
 mSet<-ReplaceMin(mSet);
 mSet<-PreparePrenormData(mSet)
+#normalization using reference feature,log transformation,auto normalization
 mSet<-Normalization(mSet, "CompNorm", "LogNorm", "AutoNorm", ref="722", ratio=FALSE, ratioNum=20)
 mSet<-PlotNormSummary(mSet, "norm_0_", "png", 72, width=NA)
 mSet<-PlotSampleNormSummary(mSet, "snorm_0_", "png", 72, width=NA)
+#export normalized data
+normal <- mSet[["dataSet"]][["norm"]]
 ```
 
 ```{r data-summary}
