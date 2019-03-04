@@ -35,6 +35,7 @@ treatment2 <- posmean_group2$treatment
 
 ```{r normalization}
 library(MetaboAnalystR)
+#write posmean_group2 to csv
 write_csv(posmean_group2,"posmean_group.csv")
 #set up method project 
 mSet<-InitDataObjects("conc", "stat", FALSE)
