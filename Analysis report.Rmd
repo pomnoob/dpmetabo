@@ -24,11 +24,18 @@ posmean <- posmean_eq %>%
 subid2 <- posmean$subid %>% str_replace("[0-9][0-9]_pos\\.[ABCD]","_")
 treat <- rep(c("Adiet","Bdiet","Cdiet","Ddiet"),times=c(16,16,18,18))
 posmean_group <- posmean %>% dplyr::select(-subid) %>% add_column(subid=subid2,treatment=treat) %>% dplyr::select(subid,treatment,everything())
+
+#Subject number 11 and 12 didnot finish diet A and B, remove these two samples from data
+posmean_group2 <- posmean_group %>% slice(-43,-44,-61,-62)
+#get subject id and treatment for the sample
+subid_int <- posmean_group2$subid
+treatment2 <- posmean_group2$treatment
+
 ```
 
 ```{r normalization}
 library(MetaboAnalystR)
-write_csv(posmean_group,"posmean_group.csv")
+write_csv(posmean_group2,"posmean_group.csv")
 #set up method project 
 mSet<-InitDataObjects("conc", "stat", FALSE)
 #samples in row not paired
