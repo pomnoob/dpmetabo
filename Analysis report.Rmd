@@ -7,8 +7,14 @@ This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute
 
 Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
 
-```{r transpose}
+```{r packagelowding}
 library(tidyverse)
+library(MetaboAnalystR)
+library(mixOmics)
+```
+
+
+```{r transpose}
 #import mean concentraiton data in postive mode
 posmean_sub <- read_csv("posmean_sub.csv")
 #import compound id data file
@@ -34,7 +40,6 @@ treatment2 <- posmean_group2$treatment
 ```
 
 ```{r normalization}
-library(MetaboAnalystR)
 #write posmean_group2 to csv
 write_csv(posmean_group2,"posmean_group.csv")
 #set up method project 
@@ -52,15 +57,81 @@ mSet<-PlotSampleNormSummary(mSet, "snorm_0_", "png", 72, width=NA)
 normal <- mSet[["dataSet"]][["norm"]]
 ```
 
-```{r mixOmics}
-library(mixOmics)
+```{r multilevelPCA}
+
 pca.multilevel.dp <- pca(normal, ncomp = 3, scale = TRUE, center = TRUE, 
                             multilevel = subid_int)
 pca.multilevel.dp
 plotIndiv(pca.multilevel.dp, , ind.names = treatment2, 
-          group = treatment2,
+          group = treatment2, ellipse = TRUE, legend = TRUE,
           title = 'dp, PCA multilevel, comp 1 - 2')
 
 ```
 
+```{r varaiableSelection}
+dp.plsda.ml <- plsda(normal,treatment2,
+multilevel = subid_int,
+ncomp = 10)
+
+plotIndiv(dp.plsda.ml, comp = 1:2,
+          group = treatment2, ind.names = treatment2, 
+          ellipse = TRUE, legend = TRUE, title = 'PLSDA on DP')
+```
+
+```{r}
+set.seed(2543) # for reproducibility, only when the `cpus' argument is not used
+perf.plsda.dp <- perf(dp.plsda.ml, validation = "Mfold", folds = 5, 
+                  progressBar = FALSE, auc = TRUE, nrepeat = 10) 
+
+plot(perf.plsda.dp, col = color.mixo(5:7), sd = TRUE, legend.position = "horizontal")
+
+auc.plsda = auroc(dp.plsda.ml, roc.comp = 5)
+```
+
+```{r tunning }
+#tunning for number of component and variables for the splsda model
+list.keepX <- c(1:10,  seq(20, 300, 10))
+
+tune.splsda.dp <- tune.splsda(normal,treatment2, ncomp = 5, validation = 'Mfold', folds = 5, 
+                           progressBar = TRUE, dist = 'max.dist', measure = "BER",multilevel = subid_int,
+                          test.keepX = list.keepX, nrepeat = 10, cpus = 4)
+
+error <- tune.splsda.dp$error.rate  # error rate per component for the keepX grid
+
+ncomp <- tune.splsda.dp$choice.ncomp$ncomp # optimal number of components based on t-tests
+ncomp
+
+select.keepX <- tune.splsda.dp$choice.keepX[1:ncomp]  # optimal number of variables to select
+select.keepX
+
+plot(tune.splsda.dp, col = color.jet(5))
+
+splsda.dp <- splsda(normal,treatment2, ncomp = ncomp, keepX = select.keepX,multilevel = subid_int) 
+
+# Sample plot of the tunned model
+plotIndiv(splsda.dp, comp = c(1,2),
+          group = treatment2, ind.names = treatment2, 
+          ellipse = TRUE, legend = TRUE,
+          title = 'sPLS-DA on DP, comp 1 & 2')
+
+auc.dp = auroc(splsda.dp, roc.comp = 2)
+
+set.seed(40) # for reproducibility, only when the `cpus' argument is not used
+# takes about 1 min to run
+perf.dp<- perf(splsda.dp, validation = "Mfold", folds = 5,
+                   dist = 'max.dist', nrepeat = 10,
+                   progressBar = FALSE) 
+perf.dp$error.rate
+plot(perf.dp, col = color.mixo(5))
+
+```
+```{r varaibleSelection}
+ind.match = match(selectVar(splsda.dp, comp = 1)$name, 
+                  names(perf.dp$features$stable[[1]]))
+
+Freq = as.numeric(perf.dp$features$stable[[1]][ind.match])
+
+data.frame(selectVar(splsda.dp, comp = 1)$value, Freq)
+
+```
 
