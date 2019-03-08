@@ -19,8 +19,10 @@ library(mixOmics)
 posmean_sub <- read_csv("posmean_sub.csv")
 #import compound id data file
 pos_comid <- read_csv("pos_comid.csv")
+
 #select subjects only, exclude QC and Mean values
 posmean_eq <- dplyr::select(posmean_sub,id,matches("^[ABCD]"))
+
 #Transpose data frame:subjects in row
 posmean <- posmean_eq %>%
   rename(metid=id) %>%
@@ -28,6 +30,7 @@ posmean <- posmean_eq %>%
   spread(metid,value)
 #Change format of subject id and add treatment class for each row
 subid2 <- posmean$subid %>% str_replace("[0-9][0-9]_pos\\.[ABCD]","_")
+
 treat <- rep(c("Adiet","Bdiet","Cdiet","Ddiet"),times=c(16,16,18,18))
 posmean_group <- posmean %>% dplyr::select(-subid) %>% add_column(subid=subid2,treatment=treat) %>% dplyr::select(subid,treatment,everything())
 
@@ -61,6 +64,14 @@ posmean_cd <- posmean_group2 %>% slice(33:64) %>% dplyr::select(-treatment) %>% 
 
 ```
 
+
+# Need to get files for MS2 identified metabolites
+```{r MS2Only}
+
+```
+
+
+
 ```{r normalization}
 #write posmean_group2 to csv
 write_csv(posmean_group2,"posmean_group.csv")
@@ -71,8 +82,8 @@ mSet<-Read.TextData(mSet, "posmean_group.csv", "rowu", "disc");
 mSet<-SanityCheckData(mSet)
 mSet<-ReplaceMin(mSet);
 mSet<-PreparePrenormData(mSet)
-#normalization using reference feature,log transformation,auto normalization
-mSet<-Normalization(mSet, "CompNorm", "LogNorm", "AutoNorm", ref="722", ratio=FALSE, ratioNum=20)
+#normalization using log transformation,auto normalization
+mSet<-Normalization(mSet, "NULL", "LogNorm", "AutoNorm",, ratio=FALSE, ratioNum=20)
 mSet<-PlotNormSummary(mSet, "norm_0_", "png", 72, width=NA)
 mSet<-PlotSampleNormSummary(mSet, "snorm_0_", "png", 72, width=NA)
 #export normalized data
@@ -86,7 +97,7 @@ pca.multilevel.dp <- pca(normal, ncomp = 3, scale = TRUE, center = TRUE,
 
 plotIndiv(pca.multilevel.dp, , ind.names = treatment2, 
           group = treatment2, ellipse = TRUE, legend = TRUE,
-          title = 'dp, PCA multilevel, comp 1 - 2')
+          title = 'Sample plot based on multulevel PCA')
 
 ```
 
@@ -134,7 +145,7 @@ splsda.dp <- splsda(normal,treatment2, ncomp = ncomp, keepX = select.keepX,multi
 plotIndiv(splsda.dp, comp = c(1,2),
           group = treatment2, ind.names = treatment2, 
           ellipse = TRUE, legend = TRUE,
-          title = 'sPLS-DA on DP, comp 1 & 2')
+          title = 'Sample plot based on sPLS-DA model')
 
 auc.dp = auroc(splsda.dp, roc.comp = 2)
 
@@ -206,5 +217,10 @@ mSet<-PlotSAM.Cmpd(mSet, "sam_imp_1_", "png", 72, width=NA)
 
 #Export metabolites ID with Delta of 1
 view(mSet)
-sam.metaID <- mSet[["analSet"]][["sam.cmpds"]]
+sam.metaID <- mSet[["analSet"]][["sam.cmpds"]] %>% as.data.frame() %>% as.tibble(rownames="id")
+#get metabolites names
+pos_MS2 <- pos_comid %>% dplyr::select(id,"MS2 name")
+pos_MS2$id <-as.character(pos_MS2$id)
+sam.metaID_ad <- sam.metaID %>% left_join(pos_MS2,by="id")
 ```
+
