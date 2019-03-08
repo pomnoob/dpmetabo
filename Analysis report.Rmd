@@ -37,6 +37,28 @@ posmean_group2 <- posmean_group %>% slice(-43,-44,-61,-62)
 subid_int <- posmean_group2$subid %>% str_replace("^[ABCD]_","s") #To get a number for each subject
 treatment2 <- posmean_group2$treatment 
 
+#generate two group file
+glabel <- c(1:16,-1:-16
+          )
+#files for group A and B
+posmean_ab <- posmean_group2 %>% slice(1:32) %>% dplyr::select(-treatment) %>% add_column(label=glabel) %>% dplyr::select(subid,label,everything())
+
+#files for group A and C
+posmean_ac <- posmean_group2 %>% slice(1:16,33:48) %>% dplyr::select(-treatment) %>% add_column(label=glabel) %>% dplyr::select(subid,label,everything())
+
+#files for group A and D
+posmean_ad <- posmean_group2 %>% slice(1:16,49:64) %>% dplyr::select(-treatment) %>% add_column(label=glabel) %>% dplyr::select(subid,label,everything())
+
+#files for group B and C
+posmean_bc <- posmean_group2 %>% slice(17:32,33:48) %>% dplyr::select(-treatment) %>% add_column(label=glabel) %>% dplyr::select(subid,label,everything())
+
+#files for group B and D
+posmean_bd <- posmean_group2 %>% slice(17:32,49:64) %>% dplyr::select(-treatment) %>% add_column(label=glabel) %>% dplyr::select(subid,label,everything())
+
+#files for group C and D
+posmean_cd <- posmean_group2 %>% slice(33:64) %>% dplyr::select(-treatment) %>% add_column(label=glabel) %>% dplyr::select(subid,label,everything())
+
+
 ```
 
 ```{r normalization}
@@ -61,7 +83,7 @@ normal <- mSet[["dataSet"]][["norm"]]
 
 pca.multilevel.dp <- pca(normal, ncomp = 3, scale = TRUE, center = TRUE, 
                             multilevel = subid_int)
-pca.multilevel.dp
+
 plotIndiv(pca.multilevel.dp, , ind.names = treatment2, 
           group = treatment2, ellipse = TRUE, legend = TRUE,
           title = 'dp, PCA multilevel, comp 1 - 2')
@@ -134,4 +156,40 @@ Freq = as.numeric(perf.dp$features$stable[[1]][ind.match])
 data.frame(selectVar(splsda.dp, comp = 1)$value, Freq)
 
 ```
+```{r cim}
+#It's not working right now, need to tune it out.
 
+dp.splsda.multilevel <- mixOmics::splsda(normal, treatment2,
+                                  multilevel = subid_int, 
+                                  ncomp = 4, 
+                                  keepX = c(220, 50, 1,20))
+
+col.ID <- qualitative_hcl(16, "Dark 3")
+
+cim(dp.splsda.multilevel,
+    row.sideColors = cbind(color.mixo(c(treatment2)), col.ID),
+    row.names = paste(treatment2, subid_int, sep = "_"),
+    col.names = FALSE, legend=list(legend = c(levels(treatment2)), 
+    col = c(color.mixo(1:4)),
+    title = "Stimulation"))
+```
+ 
+#第一步先进行A和D组的两两对比
+
+```{r ADnormalization}
+#write posmean_ad to csv
+write_csv(posmean_ad,"posmean_ad.csv")
+#set up method project 
+mSet<-InitDataObjects("conc", "stat", FALSE)
+#samples in row not paired
+mSet<-Read.TextData(mSet, "posmean_group.csv", "rowu", "disc");
+mSet<-SanityCheckData(mSet)
+mSet<-ReplaceMin(mSet);
+mSet<-PreparePrenormData(mSet)
+#normalization using reference feature,log transformation,auto normalization
+mSet<-Normalization(mSet, "CompNorm", "LogNorm", "AutoNorm", ref="722", ratio=FALSE, ratioNum=20)
+mSet<-PlotNormSummary(mSet, "norm_0_", "png", 72, width=NA)
+mSet<-PlotSampleNormSummary(mSet, "snorm_0_", "png", 72, width=NA)
+#export normalized data
+normal <- mSet[["dataSet"]][["norm"]]
+```
