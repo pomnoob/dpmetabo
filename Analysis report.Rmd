@@ -14,20 +14,31 @@ library(mixOmics)
 ```
 
 
-```{r transpose}
+```{r data file import}
 #import mean concentraiton data in postive mode
 posmean_sub <- read_csv("posmean_sub.csv")
+
 #import compound id data file
 pos_comid <- read_csv("pos_comid.csv")
 
 #select subjects only, exclude QC and Mean values
 posmean_eq <- dplyr::select(posmean_sub,id,matches("^[ABCD]"))
 
+#get metabolites names
+pos_MS2 <- pos_comid %>% dplyr::select(id,"MS2 name")
+pos_MS2$id <-as.character(pos_MS2$id)
+
+
+```
+
+
+```{r files with all metabolites}
 #Transpose data frame:subjects in row
 posmean <- posmean_eq %>%
   rename(metid=id) %>%
   gather(subid,value,-metid) %>%
   spread(metid,value)
+
 #Change format of subject id and add treatment class for each row
 subid2 <- posmean$subid %>% str_replace("[0-9][0-9]_pos\\.[ABCD]","_")
 
@@ -62,17 +73,123 @@ posmean_bd <- posmean_group2 %>% slice(17:32,49:64) %>% dplyr::select(-treatment
 posmean_cd <- posmean_group2 %>% slice(33:64) %>% dplyr::select(-treatment) %>% add_column(label=glabel) %>% dplyr::select(subid,label,everything())
 
 
+
 ```
 
 
 # Need to get files for MS2 identified metabolites
 ```{r MS2Only}
+posmean_eq$id <- as.character(posmean_eq$id)
+
+#link metabolite id to metabolite names
+posmean_ms2 <- posmean_eq %>% left_join(pos_MS2,by="id") %>% drop_na()
+
+#transpose data: samples in row
+posmean_ms2T <- posmean_ms2 %>%
+  rename(metid="MS2 name") %>%
+  gather(subid,value,-metid) %>%
+  spread(metid,value) %>% dplyr::slice(1:68)
+
+#Change format of subject id and add treatment class for each row
+
+posmean_ms2Tg <- posmean_ms2T %>% dplyr::select(-subid) %>% add_column(subid=subid2,treatment=treat) %>% dplyr::select(subid,treatment,everything())
+
+#Subject number 11 and 12 didnot finish diet A and B, remove these two samples from data
+posmean_ms2Tg <- posmean_ms2Tg %>% slice(-43,-44,-61,-62)
+#get subject id and treatment for the sample
+subid_MS2 <- posmean_ms2Tg$subid %>% str_replace("^[ABCD]_","s") #To get a number for each subject
+treatmentMS2 <- posmean_ms2Tg$treatment 
+
+
+#files for group A and B
+posmean_abMS2 <- posmean_ms2Tg %>% slice(1:32) %>% dplyr::select(-treatment) %>% add_column(label=glabel) %>% dplyr::select(subid,label,everything())
+
+#files for group A and C
+posmean_acMS2  <- posmean_ms2Tg  %>% slice(1:16,33:48) %>% dplyr::select(-treatment) %>% add_column(label=glabel) %>% dplyr::select(subid,label,everything())
+
+#files for group A and D
+posmean_adMS2  <- posmean_ms2Tg  %>% slice(1:16,49:64) %>% dplyr::select(-treatment) %>% add_column(label=glabel) %>% dplyr::select(subid,label,everything())
+
+#files for group B and C
+posmean_bcMS2  <- posmean_ms2Tg  %>% slice(17:32,33:48) %>% dplyr::select(-treatment) %>% add_column(label=glabel) %>% dplyr::select(subid,label,everything())
+
+#files for group B and D
+posmean_bdMS2  <- posmean_ms2Tg  %>% slice(17:32,49:64) %>% dplyr::select(-treatment) %>% add_column(label=glabel) %>% dplyr::select(subid,label,everything())
+
+#files for group C and D
+posmean_cdMS2  <- posmean_ms2Tg  %>% slice(33:64) %>% dplyr::select(-treatment) %>% add_column(label=glabel) %>% dplyr::select(subid,label,everything())
+
+#for time-series analysis:A,B and C
+
+Subject <- rep(c(1:16),times=4)
+timet  <- rep(c(1,2,3,4),times=c(16,16,16,16))
+
+posmean_abcMS2 <- posmean_ms2Tg  %>% add_column(Subject=Subject,Time=timet) %>% dplyr::select(subid,Subject,Time,everything(),-treatment) %>% dplyr::slice(1:48) %>% arrange(Subject,Time)
+
+write_csv(posmean_abcMS2,"posmean_abcMS2.csv")
+
+```
+
+```{r normalization of MS2}
+#write file to csv
+write_csv(posmean_ms2Tg,"posmean_ms2Tg.csv")
+
+#set up method project 
+MS2Set<-InitDataObjects("conc", "stat", FALSE)
+
+#samples in row not paired
+MS2Set<-Read.TextData(MS2Set, "posmean_ms2Tg.csv", "rowu", "disc");
+MS2Set<-SanityCheckData(MS2Set)
+MS2Set<-ReplaceMin(MS2Set);
+MS2Set<-PreparePrenormData(MS2Set)
+#normalization using log transformation,auto normalization
+MS2Set<-Normalization(MS2Set, "NULL", "LogNorm", "AutoNorm",, ratio=FALSE, ratioNum=20)
+MS2Set<-PlotNormSummary(MS2Set, "norm_0_", "png", 72, width=NA)
+MS2Set<-PlotSampleNormSummary(MS2Set, "snorm_0_", "png", 72, width=NA)
+#export normalized data
+normalMS2 <- MS2Set[["dataSet"]][["norm"]]
+
+```
+
+```{r multilevel PCA of MS2}
+pca.multilevel.dp <- pca(normalMS2, ncomp = 3, scale = TRUE, center = TRUE, 
+                            multilevel = subid_MS2)
+
+plotIndiv(pca.multilevel.dp, , ind.names = treatmentMS2, 
+          group = treatmentMS2, ellipse = TRUE, legend = TRUE,
+          title = 'Multilevel PCA with MS2 identified metabolites')
+
+```
+
+```{r splsda of ms2}
+#tunning for number of component and variables for the splsda model
+list.keepX <- c(1:10,  seq(20, 300, 10))
+
+tune.splsda.dpMS2 <- tune.splsda(normalMS2,treatmentMS2, ncomp = 5, validation = 'Mfold', folds = 5, 
+                           progressBar = TRUE, dist = 'max.dist', measure = "BER",multilevel = subid_MS2,
+                          test.keepX = list.keepX, nrepeat = 10, cpus = 4)
+
+error <- tune.splsda.dpMS2$error.rate  # error rate per component for the keepX grid
+
+ncomp <- tune.splsda.dpMS2$choice.ncomp$ncomp # optimal number of components based on t-tests
+ncomp
+
+select.keepXMS2 <- tune.splsda.dpMS2$choice.keepX[1:ncomp]  # optimal number of variables to select
+select.keepXMS2
+
+plot(tune.splsda.dpMS2, col = color.jet(5))
+
+splsda.dpMS2 <- splsda(normalMS2,treatmentMS2, ncomp = ncomp, keepX = select.keepXMS2,multilevel = subid_MS2) 
+
+# Sample plot of the tunned model
+plotIndiv(splsda.dpMS2, comp = c(1,2),
+          group = treatmentMS2, ind.names = treatmentMS2, 
+          ellipse = TRUE, legend = TRUE,title = 'sPLS-DA model of MS2')
 
 ```
 
 
-
-```{r normalization}
+```{r normalization of all}
 #write posmean_group2 to csv
 write_csv(posmean_group2,"posmean_group.csv")
 #set up method project 
@@ -218,9 +335,35 @@ mSet<-PlotSAM.Cmpd(mSet, "sam_imp_1_", "png", 72, width=NA)
 #Export metabolites ID with Delta of 1
 view(mSet)
 sam.metaID <- mSet[["analSet"]][["sam.cmpds"]] %>% as.data.frame() %>% as.tibble(rownames="id")
-#get metabolites names
-pos_MS2 <- pos_comid %>% dplyr::select(id,"MS2 name")
-pos_MS2$id <-as.character(pos_MS2$id)
 sam.metaID_ad <- sam.metaID %>% left_join(pos_MS2,by="id")
 ```
 
+```{r ADnormalization for MS2}
+#write posmean_ad to csv
+write_csv(posmean_adMS2,"posmean_adMS2.csv")
+#Model definition and missing value check:paired concentraion with samples in row
+adMS2<-InitDataObjects("conc", "stat", TRUE)
+adMS2<-Read.TextData(adMS2, "posmean_adMS2.csv", "rowp", "disc");
+adMS2<-SanityCheckData(adMS2)
+adMS2<-ReplaceMin(adMS2);
+adMS2<-PreparePrenormData(adMS2)
+#Normalization: log transformation,auto column normalization
+adMS2<-Normalization(adMS2, "NULL", "LogNorm", "AutoNorm", ratio=FALSE, ratioNum=20)
+adMS2<-PlotNormSummary(adMS2, "norm_0_", "png", 72, width=NA)
+adMS2<-PlotSampleNormSummary(adMS2, "snorm_0_", "png", 72, width=NA)
+
+#SAM analysis
+adMS2<-SAM.Anal(adMS2, "d.stat", TRUE, TRUE)
+#Delta 0.6
+adMS2<-PlotSAM.FDR(adMS2, 0.6, "sam_view_0.6MS2_", "png", 72, width=NA)
+
+adMS2<-SetSAMSigMat(adMS2, 0.6)
+adMS2<-PlotSAM.Cmpd(adMS2, "sam_imp_0.6MS2_", "png", 72, width=NA)
+
+
+
+#Export metabolites ID with Delta of 1
+view(adMS2)
+sam.adMS2 <- adMS2[["analSet"]][["sam.cmpds"]] 
+
+```
