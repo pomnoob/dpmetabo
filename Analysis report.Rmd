@@ -179,17 +179,32 @@ cim(dp.splsda.multilevel,
 ```{r ADnormalization}
 #write posmean_ad to csv
 write_csv(posmean_ad,"posmean_ad.csv")
-#set up method project 
-mSet<-InitDataObjects("conc", "stat", FALSE)
-#samples in row not paired
-mSet<-Read.TextData(mSet, "posmean_group.csv", "rowu", "disc");
+#Model definition and missing value check:paired concentraion with samples in row
+mSet<-InitDataObjects("conc", "stat", TRUE)
+mSet<-Read.TextData(mSet, "posmean_ad.csv", "rowp", "disc");
 mSet<-SanityCheckData(mSet)
 mSet<-ReplaceMin(mSet);
 mSet<-PreparePrenormData(mSet)
-#normalization using reference feature,log transformation,auto normalization
-mSet<-Normalization(mSet, "CompNorm", "LogNorm", "AutoNorm", ref="722", ratio=FALSE, ratioNum=20)
+#Normalization: log transformation,auto column normalization
+mSet<-Normalization(mSet, "NULL", "LogNorm", "AutoNorm", ratio=FALSE, ratioNum=20)
 mSet<-PlotNormSummary(mSet, "norm_0_", "png", 72, width=NA)
 mSet<-PlotSampleNormSummary(mSet, "snorm_0_", "png", 72, width=NA)
-#export normalized data
-normal <- mSet[["dataSet"]][["norm"]]
+
+#SAM analysis
+mSet<-SAM.Anal(mSet, "d.stat", TRUE, TRUE)
+#Delta 0.6
+mSet<-PlotSAM.FDR(mSet, 0.6, "sam_view_0.6_", "png", 72, width=NA)
+
+mSet<-SetSAMSigMat(mSet, 0.6)
+mSet<-PlotSAM.Cmpd(mSet, "sam_imp_0.6_", "png", 72, width=NA)
+
+#Delta 1.0
+mSet<-PlotSAM.FDR(mSet,1, "sam_view_1_", "png", 72, width=NA)
+
+mSet<-SetSAMSigMat(mSet,1)
+mSet<-PlotSAM.Cmpd(mSet, "sam_imp_1_", "png", 72, width=NA)
+
+#Export metabolites ID with Delta of 1
+view(mSet)
+sam.metaID <- mSet[["analSet"]][["sam.cmpds"]]
 ```
