@@ -21,20 +21,20 @@ posmean_sub <- read_csv("posmean_sub.csv")
 #import compound id data file
 pos_comid <- read_csv("pos_comid.csv")
 
-#select subjects only, exclude QC and Mean values
-posmean_eq <- dplyr::select(posmean_sub,id,matches("^[ABCD]"))
+#select subjects only, exclude QC and Mean values, calculate median of QC samples for normalization
+qcm <-posmean_sub %>% dplyr::select(id,QC01_pos.QC01:QC09_pos.QC09)
+
+posmean_eq <- posmean_sub  %>% dplyr::select(id,matches("^[ABCD]"))
+
+posmean_eq$MeQC <- apply(qcm,1,median)
+
 
 #get metabolites names
 pos_MS2 <- pos_comid %>% dplyr::select(id,"MS2 name")
 pos_MS2$id <-as.character(pos_MS2$id)
 
-
-```
-
-
-```{r files with all metabolites}
 #Transpose data frame:subjects in row
-posmean <- posmean_eq %>%
+posmean <- posmean_eq %>% 
   rename(metid=id) %>%
   gather(subid,value,-metid) %>%
   spread(metid,value)
@@ -42,8 +42,34 @@ posmean <- posmean_eq %>%
 #Change format of subject id and add treatment class for each row
 subid2 <- posmean$subid %>% str_replace("[0-9][0-9]_pos\\.[ABCD]","_")
 
-treat <- rep(c("Adiet","Bdiet","Cdiet","Ddiet"),times=c(16,16,18,18))
+treat <- rep(c("Adiet","Bdiet","Cdiet","Ddiet","QC"),times=c(16,16,18,18,1))
 posmean_group <- posmean %>% dplyr::select(-subid) %>% add_column(subid=subid2,treatment=treat) %>% dplyr::select(subid,treatment,everything())
+
+
+```
+
+#Normalization of the intact sample file
+
+```{r normalization using MetaboAnalystR}
+
+#write file to csv
+write_csv(posmean_group,"posmean_prenorm.csv")
+
+normAll<-InitDataObjects("conc", "stat", FALSE)
+normAll<-Read.TextData(normAll, "posmean_prenorm.csv", "rowu", "disc");
+normAll<-SanityCheckData(normAll)
+
+normAll<-ReplaceMin(normAll);
+normAll<-PreparePrenormData(normAll)
+normAll<-Normalization(normAll, "SamplePQN", "LogNorm", "ParetoNorm", "MeQC", ratio=FALSE, ratioNum=20)
+normAll<-PlotNormSummary(normAll, "norm_0_", "png", 72, width=NA)
+normAll<-PlotSampleNormSummary(normAll, "snorm_0_", "png", 72, width=NA)
+
+```
+
+
+```{r files with all metabolites}
+
 
 #Subject number 11 and 12 didnot finish diet A and B, remove these two samples from data
 posmean_group2 <- posmean_group %>% slice(-43,-44,-61,-62)
@@ -55,7 +81,7 @@ treatment2 <- posmean_group2$treatment
 glabel <- c(1:16,-1:-16
           )
 #files for group A and B
-posmean_ab <- posmean_group2 %>% slice(1:32) %>% dplyr::select(-treatment) %>% add_column(label=glabel) %>% dplyr::select(subid,label,everything())
+posmean_ab <- posmean_group2 %>% slice(1:32,) %>% dplyr::select(-treatment) %>% add_column(label=glabel) %>% dplyr::select(subid,label,everything())
 
 #files for group A and C
 posmean_ac <- posmean_group2 %>% slice(1:16,33:48) %>% dplyr::select(-treatment) %>% add_column(label=glabel) %>% dplyr::select(subid,label,everything())
