@@ -1,3 +1,9 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r data import,include=FALSE}
 library(tidyverse)
 
 # Load injection order file
@@ -15,7 +21,9 @@ pos_pro <- dplyr::select(pos_ori, -2, -3, -4, -5, -6, -7, -8)  #select feature p
 sampid <- names(pos_pro) %>% str_replace("[0-9][0-9]_pos\\.[ABCD]|[0-9][0-9]_pos\\.QC", "")
 names(pos_pro) <- sampid
 pos_pro <- dplyr::rename(pos_pro, QC10 = QC0010)
+```
 
+```{r data for statTarget, include=FALSE}
 # Get files ready for statTarget sample list file
 samp_list <- inj_order
 samp_list$batch <- rep(c(1), time(78))
@@ -25,10 +33,16 @@ write.csv(samp_list, "data/samp_list.csv", row.names = F)
 # Feature file
 samp_fea <- dplyr::rename(pos_pro, name = id)
 write.csv(samp_fea, "data/samp_fea.csv", row.names = F)
+```
 
+```{r QC normalization, eval = FALSE}
 # QC-RLSC normalization
 library(statTarget)
 shiftCor("data/samp_list.csv", "data/samp_fea.csv", Frule = 0.9, MLmethod = "QCRLSC", QCspan = 0, imputeM = "KNN")
+```
+
+```{r MSTUS, include=FALSE}
+
 qcnorm_pos <- read.csv("statTarget/shiftCor/After_shiftCor/shift_all_cor.csv", header = F, stringsAsFactors = F)
 colnames(qcnorm_pos) <- qcnorm_pos[1, ]
 qcnorm_pos <- as.data.frame(qcnorm_pos[-1, ])
@@ -39,4 +53,5 @@ for (i in 3:1853) {
     qcnorm_pos[, i] <- qcnorm_pos[, i]/qcnorm_pos[, "rowsum"]
 }
 qcnorm_pos <- as.data.frame(qcnorm_pos[, -1854])
+```
 
