@@ -92,12 +92,21 @@ ts_pos <- ts_pos %>% dplyr::arrange(sample) %>% dplyr::slice(-43,-44,-61,-62)
 ts_pos$class <- rep(c("a","b","c","d"),times=c(16,16,16,16))
 ts_pos <- dplyr::select(ts_pos,sample,class,everything())
 
+
+
 ts_posMS2 <- ts_pos %>% dplyr::select(-contains("unknown"))
+
+#Write data file to csv: After QCRLSC, MSTUS, log transformation and Pareto scaling
+
+write.csv(ts_pos,"data/ts all with MS2 names.csv",row.names = F)
+
+write.csv(ts_posMS2,"data/ts all with MS2 only.csv",row.names = F)
 
 ```
 
 
-```{r data file for comparisons}
+
+```{r data file for comparisons, include=FALSE}
 
 ab_posMS2 <- dplyr::slice(ts_posMS2,1:32)
 
@@ -157,8 +166,13 @@ write.csv(timese_result,"data/time series-ABC-results.csv")
 
 ```
 
-```{r PLS analysis of AC using MetaboAnalystR}
+```{r PLS analysis of AC using MetaboAnalystR,include=FALSE}
 library(MetaboAnalystR)
+
+ac_posMS2$Label=c(1:16,-1:-16)
+ac_posMS2 <- ac_posMS2 %>% dplyr::select(sample,Label,everything()) %>% dplyr::select(-class)
+
+write.csv(ac_posMS2,"data/ac_posMS2.csv",row.names = F)
 
 ac_pls<-InitDataObjects("conc", "stat", TRUE)
 ac_pls<-Read.TextData(ac_pls, "data/ac_posMS2.csv", "rowp", "disc");
@@ -182,10 +196,84 @@ ac_pls_vip<-PlotPLS.Imp(ac_pls, "figure/ac pls_vip", "png", 72, width=NA, "vip",
 
 ac_vip <- ac_pls_vip$analSet$plsda$vip.mat
 
-write.csv(ac_vip,"data/ac plsda vip.csv")
+ac_vip_d <- as.data.frame(ac_vip)
+ac_vip_d <- dplyr::select(ac_vip_d,ac_vip_c1='Comp. 1')
+
+write.csv(ac_vip_d,"data/ac plsda vip.csv")
+```
+
+```{r PLS analysis of AB using MetaboAnalystR,include=FALSE}
+library(MetaboAnalystR)
+
+ab_posMS2$Label=c(1:16,-1:-16)
+ab_posMS2 <- ab_posMS2 %>% dplyr::select(sample,Label,everything()) %>% dplyr::select(-class)
+
+write.csv(ab_posMS2,"data/ab_posMS2.csv",row.names = F)
+
+ab_pls<-InitDataObjects("conc", "stat", TRUE)
+ab_pls<-Read.TextData(ab_pls, "data/ab_posMS2.csv", "rowp", "disc");
+ab_pls<-SanityCheckData(ab_pls)
+ab_pls<-ReplaceMin(ab_pls);
+ab_pls<-PreparePrenormData(ab_pls)
+ab_pls<-Normalization(ab_pls, "NULL", "NULL", "NULL", ratio=FALSE, ratioNum=20)
+
+ab_pls<-PLSR.Anal(ab_pls, reg=TRUE)
+
+ab_pls<-PlotPLSPairSummary(ab_pls, "figure/ab pls summary", "png", 72, width=NA, 5)
+
+ab_pls<-PlotPLS2DScore(ab_pls, "figure/ab pls 2D score plot", "png", 72, width=NA, 1,2,0.95,0,0)
+
+ab_pls<-PlotPLSLoading(ab_pls, "figure/ab pls loading", "png", 72, width=NA, 1, 2);
+
+ab_pls<-PLSDA.CV(ab_pls, "T",5, "Q2")
+ab_pls<-PlotPLS.Classification(ab_pls, "figure/ab pls cross validation", "png", 72, width=NA)
+
+ab_pls_vip<-PlotPLS.Imp(ab_pls, "figure/ab pls_vip", "png", 72, width=NA, "vip", "Comp. 1", 15,FALSE)
+
+ab_vip <- ab_pls_vip$analSet$plsda$vip.mat
+
+ab_vip_d <- as.data.frame(ab_vip)
+ab_vip_d <- dplyr::select(ab_vip_d,ab_vip_c1='Comp. 1')
+
+write.csv(ab_vip_d,"data/ab plsda vip.csv")
 ```
 
 
+```{r PLS analysis of BC using MetbcoAnalystR,include=FALSE}
+library(MetbcoAnalystR)
+
+bc_posMS2$Label=c(1:16,-1:-16)
+bc_posMS2 <- bc_posMS2 %>% dplyr::select(sample,Label,everything()) %>% dplyr::select(-class)
+
+write.csv(bc_posMS2,"data/bc_posMS2.csv",row.names = F)
+
+bc_pls<-InitDataObjects("conc", "stat", TRUE)
+bc_pls<-Read.TextData(bc_pls, "data/bc_posMS2.csv", "rowp", "disc");
+bc_pls<-SanityCheckData(bc_pls)
+bc_pls<-ReplaceMin(bc_pls);
+bc_pls<-PreparePrenormData(bc_pls)
+bc_pls<-Normalization(bc_pls, "NULL", "NULL", "NULL", ratio=FALSE, ratioNum=20)
+
+bc_pls<-PLSR.Anal(bc_pls, reg=TRUE)
+
+bc_pls<-PlotPLSPairSummary(bc_pls, "figure/bc pls summary", "png", 72, width=NA, 5)
+
+bc_pls<-PlotPLS2DScore(bc_pls, "figure/bc pls 2D score plot", "png", 72, width=NA, 1,2,0.95,0,0)
+
+bc_pls<-PlotPLSLoading(bc_pls, "figure/bc pls loading", "png", 72, width=NA, 1, 2);
+
+bc_pls<-PLSDA.CV(bc_pls, "T",5, "Q2")
+bc_pls<-PlotPLS.Classification(bc_pls, "figure/bc pls cross validation", "png", 72, width=NA)
+
+bc_pls_vip<-PlotPLS.Imp(bc_pls, "figure/bc pls_vip", "png", 72, width=NA, "vip", "Comp. 1", 15,FALSE)
+
+bc_vip <- bc_pls_vip$analSet$plsda$vip.mat
+
+bc_vip_d <- as.data.frame(bc_vip)
+bc_vip_d <- dplyr::select(bc_vip_d,bc_vip_c1='Comp. 1')
+
+write.csv(bc_vip_d,"data/bc plsda vip.csv")
+```
 
 
 ```{r  AC mixOmics analysis, include=FALSE}
