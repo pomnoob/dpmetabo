@@ -40,3 +40,25 @@ for (i in 3:1853) {
 }
 qcnorm_pos <- as.data.frame(qcnorm_pos[, -1854])
 
+#data for A and D, data for A,B and C
+
+norm_pos <- qcnorm_pos[!is.na(qcnorm_pos$class),]#remove qc samples
+
+normAD_pos <-norm_pos[norm_pos$class=="a"|norm_pos$class=="d",]%>% dplyr::arrange(sample) %>% dplyr::slice(-27,-28)
+
+normABC_pos<-norm_pos[norm_pos$class=="a"|norm_pos$class=="b"|norm_pos$class=="c",]%>% dplyr::arrange(sample)%>% dplyr::slice(-43,-44)
+
+#log transformation and Pareto scaling
+library(statTarget)
+write.csv(normAD_pos,"data/normAD_pos.csv",row.names = F)
+statAnalysis("data/normAD_pos.csv",Frule = 0.8, normM = "NONE", imputeM = "KNN", glog = TRUE,scaling = "Pareto")
+file.copy("statTarget/statAnalysis/scaleData_Pareto/ProcessedTable.csv","data/ts_AD.csv") #copy transformed and scaled data 
+tsAD_pos <- read.csv("data/ts_AD.csv",stringsAsFactors = F,header = F)
+colnames(tsAD_pos) <- tsAD_pos[1,]
+tsAD_pos <- as.data.frame(tsAD_pos[-1,])
+tsAD_col <- names(tsAD_pos) %>% str_replace("X","")
+names(tsAD_pos) <- tsAD_col
+
+tsAD_pos <- dplyr::rename(tsAD_pos,sample="" )
+
+

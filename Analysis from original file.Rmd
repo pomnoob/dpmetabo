@@ -14,7 +14,7 @@ pos_ori <- read.csv("data/pos-ori.csv", stringsAsFactors = F)
 
 pos_ms2 <- dplyr::select(pos_ori, id, MS2.name)  #select metabolites id and MS2 names
 pos_ms2$MS2.name <- as.character(pos_ms2$MS2.name)
-pos_ms2$MS2.name[is.na(pos_ms2$MS2.name)] <- "unknown"
+
 
 pos_pro <- dplyr::select(pos_ori, -2, -3, -4, -5, -6, -7, -8)  #select feature profiles for each sample
 
@@ -53,5 +53,212 @@ for (i in 3:1853) {
     qcnorm_pos[, i] <- qcnorm_pos[, i]/qcnorm_pos[, "rowsum"]
 }
 qcnorm_pos <- as.data.frame(qcnorm_pos[, -1854])
+```
+
+```{r data of AD and ABC,include=FALSE}
+#data for A and D, data for A,B and C
+library(tidyverse)
+
+norm_pos <- qcnorm_pos[!is.na(qcnorm_pos$class),]#remove qc samples
+
+normAD_pos <-norm_pos[norm_pos$class=="a"|norm_pos$class=="d",]%>% dplyr::arrange(sample) %>% dplyr::slice(-27,-28)
+
+normABC_pos<-norm_pos[norm_pos$class=="a"|norm_pos$class=="b"|norm_pos$class=="c",]%>% dplyr::arrange(sample)%>% dplyr::slice(-43,-44)
+```
+
+
+```{r transformation and scaling,include=FALSE}
+
+library(statTarget)
+write.csv(norm_pos,"data/norm_pos.csv",row.names = F)
+statAnalysis("data/norm_pos.csv",Frule = 0.8, normM = "NONE", imputeM = "KNN", glog = TRUE,scaling = "Pareto")
+file.copy("statTarget/statAnalysis/scaleData_Pareto/ProcessedTable.csv","data/ts_all.csv") #copy transformed and scaled data 
+
+```
+
+```{r tidy data of ts_all,include=FALSE}
+
+ts_pos <- read.csv("data/ts_all.csv",stringsAsFactors = F,header = F)
+colnames(ts_pos) <- ts_pos[1,]
+ts_pos <- as.data.frame(ts_pos[-1,])
+ts_col <- names(ts_pos) %>% str_replace("X","")
+names(ts_pos) <- ts_col
+colnames(ts_pos) <- pos_ms2$MS2.name[match(names(ts_pos),pos_ms2$id)]
+
+col12 <- names(ts_pos)
+col12[is.na(col12)] <- "sample"
+names(ts_pos) <- col12
+ts_pos <- ts_pos %>% dplyr::arrange(sample) %>% dplyr::slice(-43,-44,-61,-62)
+ts_pos$class <- rep(c("a","b","c","d"),times=c(16,16,16,16))
+ts_pos <- dplyr::select(ts_pos,sample,class,everything())
+
+ts_posMS2 <- ts_pos %>% dplyr::select(-contains("unknown"))
+
+```
+
+
+```{r data file for comparisons}
+
+ab_posMS2 <- dplyr::slice(ts_posMS2,1:32)
+
+ab_pos <- dplyr::slice(ts_pos,1:32)
+
+ac_posMS2 <- dplyr::slice(ts_posMS2,1:16,33:48)
+
+
+ac_pos <- dplyr::slice(ts_pos,1:16,33:48)
+
+ad_posMS2 <- dplyr::slice(ts_posMS2,1:16,49:64)
+
+ad_pos<- dplyr::slice(ts_pos,1:16,49:64)
+
+bc_posMS2 <- dplyr::slice(ts_posMS2,17:48)
+
+bc_pos <- dplyr::slice(ts_pos,17:48)
+
+bd_posMS2 <- dplyr::slice(ts_posMS2,17:32,49:64)
+
+bd_pos <- dplyr::slice(ts_pos,17:32,49:64)
+
+cd_posMS2 <- dplyr::slice(ts_posMS2,33:64)
+
+cd_pos <- dplyr::slice(ts_pos,33:64)
+
+abc_posMS2 <- dplyr::slice(ts_posMS2,1:48)
+
+abc_pos <- dplyr::slice(ts_pos,1:48)
+```
+
+
+```{r data file for time-series analysis using MetaboAnalystR,include=FALSE}
+abc_posMS2$time <- rep(c(1:3),times=c(16,16,16))
+abc_posMS2$subject <- rep(c(1:16),times=3)
+abc_posMS2 <- abc_posMS2 %>% dplyr::select(sample,time,subject,everything()) %>% dplyr::arrange(subject,time) %>% dplyr::select(-class)
+
+write.csv(abc_posMS2,"data/time series ABC.csv",row.names = F)
+```
+
+```{r time-series analysis using MetaboAnalystR, include=FALSE}
+library(MetaboAnalystR)
+
+
+mSet<-InitDataObjects("conc", "ts", FALSE)
+mSet<-SetDesignType(mSet, "time0")
+mSet<-Read.TextData(mSet, "data/time series ABC.csv", "rowts", "disc");
+mSet<-SanityCheckData(mSet)
+mSet<-ReplaceMin(mSet);
+mSet<-SanityCheckData(mSet)
+mSet<-ReplaceMin(mSet);
+mSet<-PreparePrenormData(mSet)
+mSet<-Normalization(mSet, "NULL", "NULL", "NULL", ratio=FALSE, ratioNum=20)
+timese<-performMB(mSet, 10)
+timese_result <- as.data.frame(timese$analSet)
+write.csv(timese_result,"data/time series-ABC-results.csv")
+
+```
+
+```{r PLS analysis of AC using MetaboAnalystR}
+library(MetaboAnalystR)
+
+ac_pls<-InitDataObjects("conc", "stat", TRUE)
+ac_pls<-Read.TextData(ac_pls, "data/ac_posMS2.csv", "rowp", "disc");
+ac_pls<-SanityCheckData(ac_pls)
+ac_pls<-ReplaceMin(ac_pls);
+ac_pls<-PreparePrenormData(ac_pls)
+ac_pls<-Normalization(ac_pls, "NULL", "NULL", "NULL", ratio=FALSE, ratioNum=20)
+
+ac_pls<-PLSR.Anal(ac_pls, reg=TRUE)
+
+ac_pls<-PlotPLSPairSummary(ac_pls, "figure/ac pls summary", "png", 72, width=NA, 5)
+
+ac_pls<-PlotPLS2DScore(ac_pls, "figure/ac pls 2D score plot", "png", 72, width=NA, 1,2,0.95,0,0)
+
+ac_pls<-PlotPLSLoading(ac_pls, "figure/ac pls loading", "png", 72, width=NA, 1, 2);
+
+ac_pls<-PLSDA.CV(ac_pls, "T",5, "Q2")
+ac_pls<-PlotPLS.Classification(ac_pls, "figure/ac pls cross validation", "png", 72, width=NA)
+
+ac_pls_vip<-PlotPLS.Imp(ac_pls, "figure/ac pls_vip", "png", 72, width=NA, "vip", "Comp. 1", 15,FALSE)
+
+ac_vip <- ac_pls_vip$analSet$plsda$vip.mat
+
+write.csv(ac_vip,"data/ac plsda vip.csv")
+```
+
+
+
+
+```{r  AC mixOmics analysis, include=FALSE}
+#multilevel design: a vector to indicate each individual
+ml2 <- data.frame(rep(c(1:16),times=2))
+ml2 <- dplyr::rename(ml2,sample=1)
+
+ml3 <- data.frame(rep(c(1:16),times=3))
+ml3 <- dplyr::rename(ml3,sample=1)
+
+# group identifier
+group_ac <- rep(c("a","c"),times=c(16,16))
+group3 <- rep(c("a","b","c"),times=c(16,16,16))
+
+library(mixOmics)
+
+# sample file:data frame to matrix
+ac_posMS2_m <- ac_posMS2[,-1:-2]
+rownames(ac_posMS2_m) <- ac_posMS2[,1]
+ac_posMS2_m <- data.matrix(ac_posMS2_m)
+
+## pls-da AC
+plsda.ac<- plsda(ac_posMS2_m, Y = group_ac, multilevel = ml2, ncomp = 10)
+
+plotIndiv(plsda.ac, ind.names = ml2,
+          group = group_ac, 
+          legend = TRUE,
+          title = 'AC multilevel PLS-DA, comp 1 - 2')
+
+set.seed(2567) # for reproducibility, only when the `cpus' argument is not used
+perf.plsda.ac <- perf(plsda.ac, validation = "loo", folds = 5, 
+                         progressBar = FALSE, auc = TRUE, nrepeat = 10) 
+
+plot(perf.plsda.ac, col = color.mixo(5:7), sd = TRUE, legend.position = "horizontal")
+
+auc.plsda.ac = auroc(plsda.ac, roc.comp = 2)
+
+##Tuning spls-da AD
+list.keepX <- c(1:10,  seq(20, 300, 10))
+
+tune.splsda.ac <- tune.splsda(ac_posMS2_m, Y = group_ac, multilevel = ml2, ncomp = 2, validation = 'Mfold', folds = 5, 
+                                 progressBar = TRUE, dist = 'max.dist', measure = "BER",
+                                 test.keepX = list.keepX, nrepeat = 10, cpus = 2)
+
+error_ac <- tune.splsda.ac$error.rate 
+
+ncomp_ac <- tune.splsda.ac$choice.ncomp$ncomp
+
+
+select.keepX_ac <- tune.splsda.ac$choice.keepX[1:2]  # optimal number of variables to select
+
+splsda.ac <- splsda(ac_posMS2_m, Y = group_ac, multilevel = ml2,ncomp = 2, keepX = select.keepX_ac) 
+
+plotIndiv(splsda.ac, 
+          group = group_ac, ind.names = FALSE, 
+          ellipse = TRUE, legend = TRUE,
+          title = 'sPLS-DA on AC, comp 1 & 2')
+
+auc.splsda.ac = auroc(splsda.ac, roc.comp = 2)
+
+set.seed(40) # for reproducibility, only when the `cpus' argument is not used
+# takes about 1 min to run
+perf.ac<- perf(splsda.ac, validation = "Mfold", folds = 5,
+                   dist = 'max.dist', nrepeat = 10,
+                   progressBar = FALSE) 
+
+# here we match the selected variables to the stable features
+ind.match = match(selectVar(splsda.ac, comp = 1)$name, 
+                  names(perf.ac$features$stable[[1]]))
+#extract the frequency of selection of those selected variables
+Freq = as.numeric(perf.ac$features$stable[[1]][ind.match])
+
+data.frame(selectVar(splsda.ac, comp = 1)$value, Freq)
+
 ```
 
