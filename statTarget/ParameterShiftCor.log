@@ -1,7 +1,0 @@
-"parameter" "value"
-"Frule" "0.9"
-"MLmethod" "QCRLSC"
-"ntree" "500"
-"QCspan" "0"
-"degree" "2"
-"imputeM" "KNN"
