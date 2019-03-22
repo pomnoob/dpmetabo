@@ -42,8 +42,8 @@ shiftCor("data/samp_list.csv", "data/samp_fea.csv", Frule = 0.9, MLmethod = "QCR
 ```
 
 ```{r MSTUS, include=FALSE}
-
-qcnorm_pos <- read.csv("statTarget/shiftCor/After_shiftCor/shift_all_cor.csv", header = F, stringsAsFactors = F)
+file.copy("statTarget/shiftCor/After_shiftCor/shift_all_cor.csv","data/qcrlsc-all-pos.csv")
+qcnorm_pos <- read.csv("data/qcrlsc-all-pos.csv", header = F, stringsAsFactors = F)
 colnames(qcnorm_pos) <- qcnorm_pos[1, ]
 qcnorm_pos <- as.data.frame(qcnorm_pos[-1, ])
 
@@ -70,15 +70,15 @@ normABC_pos<-norm_pos[norm_pos$class=="a"|norm_pos$class=="b"|norm_pos$class=="c
 ```{r transformation and scaling,include=FALSE}
 
 library(statTarget)
-write.csv(norm_pos,"data/norm_pos.csv",row.names = F)
-statAnalysis("data/norm_pos.csv",Frule = 0.8, normM = "NONE", imputeM = "KNN", glog = TRUE,scaling = "Pareto")
-file.copy("statTarget/statAnalysis/scaleData_Pareto/ProcessedTable.csv","data/ts_all.csv") #copy transformed and scaled data 
+write.csv(norm_pos,"data/mstus_pos.csv",row.names = F)
+statAnalysis("data/mstus_pos.csv",Frule = 0.8, normM = "NONE", imputeM = "KNN", glog = TRUE,scaling = "Pareto")
+file.copy("statTarget/statAnalysis/scaleData_Pareto/ProcessedTable.csv","data/ts_all_pos.csv") #copy transformed and scaled data 
 
 ```
 
 ```{r tidy data of ts_all,include=FALSE}
 
-ts_pos <- read.csv("data/ts_all.csv",stringsAsFactors = F,header = F)
+ts_pos <- read.csv("data/ts_all_pos.csv",stringsAsFactors = F,header = F)
 colnames(ts_pos) <- ts_pos[1,]
 ts_pos <- as.data.frame(ts_pos[-1,])
 ts_col <- names(ts_pos) %>% str_replace("X","")
@@ -98,9 +98,9 @@ ts_posMS2 <- ts_pos %>% dplyr::select(-contains("unknown"))
 
 #Write data file to csv: After QCRLSC, MSTUS, log transformation and Pareto scaling
 
-write.csv(ts_pos,"data/ts all with MS2 names.csv",row.names = F)
+write.csv(ts_pos,"data/ts all with MS2 names_pos.csv",row.names = F)
 
-write.csv(ts_posMS2,"data/ts all with MS2 only.csv",row.names = F)
+write.csv(ts_posMS2,"data/ts all with known MS2_pos.csv",row.names = F)
 
 ```
 
@@ -144,7 +144,7 @@ abc_posMS2$time <- rep(c(1:3),times=c(16,16,16))
 abc_posMS2$subject <- rep(c(1:16),times=3)
 abc_posMS2 <- abc_posMS2 %>% dplyr::select(sample,time,subject,everything()) %>% dplyr::arrange(subject,time) %>% dplyr::select(-class)
 
-write.csv(abc_posMS2,"data/time series ABC.csv",row.names = F)
+write.csv(abc_posMS2,"data/time series ABC_pos.csv",row.names = F)
 ```
 
 ```{r time-series analysis using MetaboAnalystR, include=FALSE}
@@ -153,7 +153,7 @@ library(MetaboAnalystR)
 
 mSet<-InitDataObjects("conc", "ts", FALSE)
 mSet<-SetDesignType(mSet, "time0")
-mSet<-Read.TextData(mSet, "data/time series ABC.csv", "rowts", "disc");
+mSet<-Read.TextData(mSet, "data/time series ABC_pos.csv", "rowts", "disc");
 mSet<-SanityCheckData(mSet)
 mSet<-ReplaceMin(mSet);
 mSet<-SanityCheckData(mSet)
@@ -162,7 +162,7 @@ mSet<-PreparePrenormData(mSet)
 mSet<-Normalization(mSet, "NULL", "NULL", "NULL", ratio=FALSE, ratioNum=20)
 timese<-performMB(mSet, 10)
 timese_result <- as.data.frame(timese$analSet)
-write.csv(timese_result,"data/time series-ABC-results.csv")
+write.csv(timese_result,"data/time series-ABC-results_pos.csv")
 
 ```
 
@@ -183,23 +183,23 @@ ac_pls<-Normalization(ac_pls, "NULL", "NULL", "NULL", ratio=FALSE, ratioNum=20)
 
 ac_pls<-PLSR.Anal(ac_pls, reg=TRUE)
 
-ac_pls<-PlotPLSPairSummary(ac_pls, "figure/ac pls summary", "png", 72, width=NA, 5)
+ac_pls<-PlotPLSPairSummary(ac_pls, "figure/MetaboAnalystR_PLSDA/ac pls summary_pos", "png", 72, width=NA, 5)
 
-ac_pls<-PlotPLS2DScore(ac_pls, "figure/ac pls 2D score plot", "png", 72, width=NA, 1,2,0.95,0,0)
+ac_pls<-PlotPLS2DScore(ac_pls, "figure/MetaboAnalystR_PLSDA/ac pls 2D score plot_pos", "png", 72, width=NA, 1,2,0.95,0,0)
 
-ac_pls<-PlotPLSLoading(ac_pls, "figure/ac pls loading", "png", 72, width=NA, 1, 2);
+ac_pls<-PlotPLSLoading(ac_pls, "figure/MetaboAnalystR_PLSDA/ac pls loading_pos", "png", 72, width=NA, 1, 2);
 
 ac_pls<-PLSDA.CV(ac_pls, "T",5, "Q2")
-ac_pls<-PlotPLS.Classification(ac_pls, "figure/ac pls cross validation", "png", 72, width=NA)
+ac_pls<-PlotPLS.Classification(ac_pls, "figure/MetaboAnalystR_PLSDA/ac pls cross validation_pos", "png", 72, width=NA)
 
-ac_pls_vip<-PlotPLS.Imp(ac_pls, "figure/ac pls_vip", "png", 72, width=NA, "vip", "Comp. 1", 15,FALSE)
+ac_pls_vip<-PlotPLS.Imp(ac_pls, "figure/MetaboAnalystR_PLSDA/ac pls_vip_pos", "png", 72, width=NA, "vip", "Comp. 1", 15,FALSE)
 
 ac_vip <- ac_pls_vip$analSet$plsda$vip.mat
 
 ac_vip_d <- as.data.frame(ac_vip)
 ac_vip_d <- dplyr::select(ac_vip_d,ac_vip_c1='Comp. 1')
 
-write.csv(ac_vip_d,"data/ac plsda vip.csv")
+write.csv(ac_vip_d,"data/ac plsda vip_pos.csv")
 ```
 
 ```{r PLS analysis of AB using MetaboAnalystR,include=FALSE}
@@ -219,28 +219,28 @@ ab_pls<-Normalization(ab_pls, "NULL", "NULL", "NULL", ratio=FALSE, ratioNum=20)
 
 ab_pls<-PLSR.Anal(ab_pls, reg=TRUE)
 
-ab_pls<-PlotPLSPairSummary(ab_pls, "figure/ab pls summary", "png", 72, width=NA, 5)
+ab_pls<-PlotPLSPairSummary(ab_pls, "figure/MetaboAnalystR_PLSDA/ab pls summary_pos", "png", 72, width=NA, 5)
 
-ab_pls<-PlotPLS2DScore(ab_pls, "figure/ab pls 2D score plot", "png", 72, width=NA, 1,2,0.95,0,0)
+ab_pls<-PlotPLS2DScore(ab_pls, "figure/MetaboAnalystR_PLSDA/ab pls 2D score plot_pos", "png", 72, width=NA, 1,2,0.95,0,0)
 
-ab_pls<-PlotPLSLoading(ab_pls, "figure/ab pls loading", "png", 72, width=NA, 1, 2);
+ab_pls<-PlotPLSLoading(ab_pls, "figure/MetaboAnalystR_PLSDA/ab pls loading_pos", "png", 72, width=NA, 1, 2);
 
 ab_pls<-PLSDA.CV(ab_pls, "T",5, "Q2")
-ab_pls<-PlotPLS.Classification(ab_pls, "figure/ab pls cross validation", "png", 72, width=NA)
+ab_pls<-PlotPLS.Classification(ab_pls, "figure/MetaboAnalystR_PLSDA/ab pls cross validation_pos", "png", 72, width=NA)
 
-ab_pls_vip<-PlotPLS.Imp(ab_pls, "figure/ab pls_vip", "png", 72, width=NA, "vip", "Comp. 1", 15,FALSE)
+ab_pls_vip<-PlotPLS.Imp(ab_pls, "figure/MetaboAnalystR_PLSDA/ab pls_vip_pos", "png", 72, width=NA, "vip", "Comp. 1", 15,FALSE)
 
 ab_vip <- ab_pls_vip$analSet$plsda$vip.mat
 
 ab_vip_d <- as.data.frame(ab_vip)
 ab_vip_d <- dplyr::select(ab_vip_d,ab_vip_c1='Comp. 1')
 
-write.csv(ab_vip_d,"data/ab plsda vip.csv")
+write.csv(ab_vip_d,"data/ab plsda vip_pos.csv")
 ```
 
 
 ```{r PLS analysis of BC using MetbcoAnalystR,include=FALSE}
-library(MetbcoAnalystR)
+library(MetaboAnalystR)
 
 bc_posMS2$Label=c(1:16,-1:-16)
 bc_posMS2 <- bc_posMS2 %>% dplyr::select(sample,Label,everything()) %>% dplyr::select(-class)
@@ -256,24 +256,34 @@ bc_pls<-Normalization(bc_pls, "NULL", "NULL", "NULL", ratio=FALSE, ratioNum=20)
 
 bc_pls<-PLSR.Anal(bc_pls, reg=TRUE)
 
-bc_pls<-PlotPLSPairSummary(bc_pls, "figure/bc pls summary", "png", 72, width=NA, 5)
+bc_pls<-PlotPLSPairSummary(bc_pls, "figure/MetaboAnalystR_PLSDA/bc pls summary_pos", "png", 72, width=NA, 5)
 
-bc_pls<-PlotPLS2DScore(bc_pls, "figure/bc pls 2D score plot", "png", 72, width=NA, 1,2,0.95,0,0)
+bc_pls<-PlotPLS2DScore(bc_pls, "figure/MetaboAnalystR_PLSDA/bc pls 2D score plot_pos", "png", 72, width=NA, 1,2,0.95,0,0)
 
-bc_pls<-PlotPLSLoading(bc_pls, "figure/bc pls loading", "png", 72, width=NA, 1, 2);
+bc_pls<-PlotPLSLoading(bc_pls, "figure/MetaboAnalystR_PLSDA/bc pls loading_pos", "png", 72, width=NA, 1, 2);
 
 bc_pls<-PLSDA.CV(bc_pls, "T",5, "Q2")
-bc_pls<-PlotPLS.Classification(bc_pls, "figure/bc pls cross validation", "png", 72, width=NA)
+bc_pls<-PlotPLS.Classification(bc_pls, "figure/MetaboAnalystR_PLSDA/bc pls cross validation_pos", "png", 72, width=NA)
 
-bc_pls_vip<-PlotPLS.Imp(bc_pls, "figure/bc pls_vip", "png", 72, width=NA, "vip", "Comp. 1", 15,FALSE)
+bc_pls_vip<-PlotPLS.Imp(bc_pls, "figure/MetaboAnalystR_PLSDA/bc pls_vip_pos", "png", 72, width=NA, "vip", "Comp. 1", 15,FALSE)
 
 bc_vip <- bc_pls_vip$analSet$plsda$vip.mat
 
 bc_vip_d <- as.data.frame(bc_vip)
 bc_vip_d <- dplyr::select(bc_vip_d,bc_vip_c1='Comp. 1')
 
-write.csv(bc_vip_d,"data/bc plsda vip.csv")
+write.csv(bc_vip_d,"data/bc plsda vip_pos.csv")
 ```
+
+
+
+
+
+
+
+
+
+
 
 
 ```{r  AC mixOmics analysis, include=FALSE}

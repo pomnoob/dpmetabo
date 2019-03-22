@@ -1,0 +1,540 @@
+"","type","Hotelling.T2"
+"Flavone","ts",320.26067
+"His-His","ts",314.66541
+"Hydroxyisocaproic acid","ts",311.26021
+"L-Threonine","ts",292.44433
+"Glucosaminic acid","ts",288.27967
+"Methyl acetoacetate","ts",251.36593
+"Allopurinol","ts",241.57654
+"Dulcin","ts",229.59236
+"2-Butoxyethanol","ts",229.00788
+"Glycyl-L-leucine","ts",215.73429
+"His-Ile","ts",214.08335
+"Capric acid","ts",211.53153
+"N.alpha.-Acetyl-L-lysine","ts",188.71992
+"gamma-Aminobutryic acid","ts",180.11883
+"Formylanthranilic acid","ts",171.29495
+"cis-4-Hydroxy-D-proline","ts",167.8685
+"Caffeine","ts",167.07603
+"His-Phe","ts",165.47139
+"Hordenine","ts",155.98899
+"1-Methyladenosine","ts",155.82729
+"alpha-Guanidinoglutaric Acid","ts",155.28653
+"Acetoacetic acid","ts",154.1577
+"DL-Norvaline","ts",153.83086
+"His-Tyr","ts",149.94405
+"Arg-Asp","ts",138.88428
+"Allopurinol riboside","ts",137.97068
+"L-Alanine","ts",129.63659
+"L-Lysine","ts",127.92298
+"3-3-Indolyl-2-oxopropanoic acid","ts",126.12196
+"4-Guanidinobutanoic acid","ts",123.88576
+"His-Ala","ts",112.84141
+"2-Octenoic acid","ts",112.45102
+"7,8-Dihydro-.alpha.-ionone","ts",110.47779
+"Indole-2-carboxylic acid","ts",109.38803
+"S-2-Hydroxyglutarate","ts",107.98737
+"Leu-Asp","ts",104.46787
+"1-Methylxanthine","ts",103.60983
+"DL-Homoserine","ts",100.95715
+"3-Methylthio-1-propanol","ts",99.61457
+"4-Aminophenol","ts",94.29738
+"2'-Deoxyuridine","ts",94.04254
+"4-Methoxyphenylacetic acid","ts",90.53174
+"Inosine","ts",84.30198
+"Arecoline","ts",81.00091
+"Dihydro-4,4-dimethyl-2,3-furandione","ts",76.31509
+"Ethanolamine","ts",75.24002
+"Dopamine","ts",74.7369
+"Bufexamac","ts",74.68711
+"DL-.alpha.-Phenylglycine","ts",74.59118
+"Deoxythymidine triphosphate dTTP","ts",74.06371
+"5-Amino-4-carbamoylimidazole AICA","ts",73.25192
+"Atrolactic acid","ts",73.11844
+"Deoxycytidine","ts",72.16841
+"Allocystathionine","ts",71.62148
+"Arg-Ala","ts",71.49967
+"Larixinic Acid","ts",71.25331
+"Dacarbazine","ts",70.18027
+"DL-3-Aminoisobutyric acid","ts",69.70637
+"Homocitrate","ts",68.20712
+"L-Carnitine","ts",65.42668
+"Kinetin","ts",65.274
+"L-Threonate","ts",63.42214
+"Indoleacrylic acid","ts",63.24881
+"Glycitein","ts",62.25001
+"Choline","ts",61.18579
+"Citraconic acid","ts",60.47703
+"1,3,5-Benzenetriol","ts",60.23758
+"D-Lactose","ts",59.0867
+"Guanosine","ts",58.37355
+"3-Furancarboxylic acid","ts",58.21475
+"L-leucyl-L-proline","ts",55.2404
+"L-homoserine","ts",54.78094
+"L-Erythro-4-Hydroxyglutamic acid","ts",53.91407
+"Ala-Asp","ts",51.21523
+"4-Aminobutyric acid","ts",51.01852
+"L-Pipecolic acid","ts",50.68651
+"Lys-Thr","ts",49.01926
+"Daidzein","ts",48.27949
+"Gly-Gln","ts",46.31723
+"Eicosapentaenoic Acid ethyl ester","ts",45.49185
+"1-Phenylethylamine","ts",45.42188
+"Met-Tyr","ts",42.75113
+"Albuterol","ts",42.73563
+"Butoxyacetic acid","ts",41.95545
+"Chlorogenic acid","ts",41.7869
+"Apigenin 7-O-neohesperidoside","ts",41.21319
+"3-Hydroxykynurenine","ts",40.3812
+"Erythritol","ts",39.77975
+"Isocaproic acid","ts",39.54277
+"--Medicarpin","ts",38.67458
+"Asp-Pro","ts",38.59701
+"2-Hydroxyphenylacetic acid","ts",38.02499
+"4-Hydroxy-6-methylpyran-2-one","ts",37.81762
+"Lomefloxacin","ts",36.5218
+"L-Fucose","ts",36.39453
+"3-Methylglutaric acid","ts",35.97689
+"Acadesine Drug","ts",35.75036
+"Camphor","ts",35.74408
+"Hippuric acid","ts",35.18176
+"L-Valine","ts",34.92476
+"Anabasine","ts",34.45825
+"alpha-ketoglutarate","ts",33.41756
+"Midazolam","ts",33.12112
+"4-Methoxycinnamic acid","ts",33.06938
+"5-L-Glutamyl-L-alanine","ts",33.04669
+"Alantolactone","ts",32.92919
+"Met-Gln","ts",32.63837
+"4-Methoxybenzoic acid","ts",31.861
+"Cyclohexylamine","ts",31.69103
+"Lys-Trp","ts",31.48658
+"Gentisaldehyde","ts",31.0898
+"N-.alpha.-Acetyl-L-arginine","ts",30.90108
+"Acetoin","ts",30.71591
+"Isovalerylglycine","ts",30.3204
+"Erucamide","ts",30.00936
+"2,5,7,8-Tetramethyl-2-.beta.-carboxyethyl-6-hydroxychroman","ts",29.61881
+"Coumarin","ts",29.57621
+"Levetiracetam","ts",28.82402
+"His-Ser","ts",28.58681
+"3-Amino-3-4-hydroxyphenylpropanoate","ts",28.55045
+"Indoxyl sulfate","ts",28.01495
+"-Methamphetamine","ts",27.6777
+"Asn-Pro","ts",27.54558
+"D-Ribose","ts",27.05689
+"Gly-Pro","ts",26.93505
+"21H-Pyridinone","ts",26.47974
+"myo-Inositol","ts",25.74896
+"Cantharidin","ts",25.09699
+"L-Histidinol","ts",24.72643
+"L-Anserine","ts",24.56422
+"Dimethylbenzimidazole","ts",24.24781
+"Methoxyacetic acid","ts",24.11743
+"2'-Deoxyinosine","ts",23.85843
+"Gly-Glu","ts",23.58743
+"L-Leucine","ts",23.13329
+"5-Aminopentanoic acid","ts",23.02317
+"L-Citrulline","ts",22.84394
+"Dimethylglycine","ts",22.73527
+"Aconitic acid","ts",21.57476
+"DL-3-Hydroxybutyric acid","ts",21.49312
+"2-Phenylbutyric acid","ts",21.43721
+"His-Glu","ts",20.9588
+"2-Ethyl-4-hydroxy-5-methyl-32H-furanone","ts",20.88131
+"d-Dethiobiotin","ts",20.8045
+"Glutaric acid","ts",20.77192
+"3-Mercapto-2-butanone","ts",20.67141
+"Diacetyl","ts",20.4718
+"Doxepin","ts",20.41133
+"Acetomenaphthone","ts",20.36666
+"D-4-Hydroxyphenylglycine","ts",20.36253
+"Clofibrate","ts",20.3024
+"DL-O-tyrosine","ts",20.29755
+"Methylguanidine","ts",20.21221
+"His-Asp","ts",19.86778
+"D-Sorbitol","ts",19.69393
+"3-Indoleacetonitrile","ts",19.47561
+"D-Maltose","ts",19.44781
+"3-Deoxy-2-keto-6-phosphogluconic acid","ts",19.07075
+"--Tylocrebrine","ts",19.03676
+"3-Hydroxyanthranilic acid","ts",19.0271
+"Histamine","ts",18.03051
+"Isovaleric acid","ts",17.68427
+"Lisinopril","ts",17.64491
+"Kynurenic acid","ts",17.41089
+"7-Methylguanosine","ts",17.35872
+"L-Aspartyl-L-phenylalanine","ts",17.2058
+"7-Methylxanthine","ts",16.85595
+"Methylmalonic acid","ts",16.70359
+"epsilon-Captrolactone","ts",16.54951
+"Glycine","ts",16.12883
+"Monoethylglycylxylidide MEGX","ts",16.11918
+"Hydroxyurea","ts",16.07252
+"Capsaicin","ts",15.94909
+"D-gluconate","ts",15.86052
+"Griseofulvin","ts",15.7737
+"Jasmine lactone","ts",15.69045
+"Anilofos","ts",15.58236
+"Arg-Ser","ts",15.38925
+"6-Benzylaminopurine","ts",15.38046
+"Betaine","ts",14.86529
+"DL-2,4-Diaminobutyric acid","ts",14.72426
+"Ile-Leu","ts",14.67462
+"Diethanolamine","ts",14.47565
+"Desoxypeganine","ts",14.40773
+"Ergothioneine","ts",14.18618
+"Benzamide","ts",14.16658
+"Ile-Thr","ts",14.13646
+"Donepezil","ts",14.02993
+"delta-Tocotrienol","ts",13.97511
+"L-Histidinol phosphate","ts",13.95973
+"Mephentermine","ts",13.8034
+"4-4-Chlorophenyl-4-hydroxypiperidine","ts",13.78577
+"DL-Homocystine","ts",13.42337
+"Arg-Ile","ts",13.33542
+"3-Hydroxyflavone","ts",13.29917
+"hydrocortisone 21-acetate","ts",13.10453
+"2-Amino-1-phenylethanol","ts",12.7744
+"Maltotetraose","ts",12.44279
+"Methomyl","ts",12.42509
+"L-Arabinose","ts",12.3491
+"1-methylguanosine","ts",12.30436
+"Acetylcholine","ts",12.09319
+"N2-Acetyl-L-ornithine","ts",12.07978
+"Bethanechol cation","ts",11.96004
+"3-Methylhistidine","ts",11.90771
+"2-Methylguanosine","ts",11.9016
+"Midodrine","ts",11.44253
+"Diethylcarbamazine","ts",11.10014
+"Glycerol","ts",11.0875
+"Butyl lactate","ts",11.01346
+"3.alpha.-Mannobiose","ts",11.01074
+"3-Methylthiopropionate","ts",11.00788
+"N6-Acetyl-L-lysine","ts",10.85583
+"Ile-Tyr","ts",10.84943
+"Citramalic acid","ts",10.71021
+"Deoxyinosine","ts",10.69592
+"Limonene-1,2-epoxide","ts",10.66224
+"3-Hydroxymandelic acid","ts",10.65261
+"D-Alanyl-D-alanine D-Ala-D-Ala","ts",10.55285
+"4-Pyridoxic acid","ts",10.29808
+"Imidazoleacetic acid","ts",10.2187
+"mafenide","ts",10.19852
+"Gln-Asn","ts",9.94885
+"Maltopentaose","ts",9.83523
+"Demethoxycurcumin","ts",9.79296
+"Dioctyl phthalate","ts",9.77611
+"Lys-Leu","ts",9.75783
+"N1-Methyl-2-pyridone-5-carboxamide","ts",9.68614
+"Gamma-Glutamylcysteine","ts",9.64494
+"Glycylproline","ts",9.63296
+"Metsulfuron-methyl","ts",9.45568
+"Isobutyrylglycine","ts",9.30438
+"L-Cystine","ts",9.25418
+"Cinnavalininate","ts",9.23434
+"N2,N2-Dimethylguanosine","ts",9.20356
+"L-NG-Monomethylarginine","ts",9.13721
+"Lys-Cys","ts",9.12612
+"L-Iditol","ts",8.81855
+"N1,N12-Diacetylspermine","ts",8.78228
+"Mexiletine","ts",8.7683
+"D-Ornithine","ts",8.50876
+"11beta-hydroxyandrost-4-ene-3,17-dione","ts",8.50686
+"Melamine","ts",8.30961
+"Ile-Ser","ts",8.30689
+"Ile-Cys","ts",8.22434
+"D-Erythrose 4-phosphate","ts",8.14778
+"Flumequine","ts",8.01814
+"Heptadecanoic acid","ts",7.86364
+"Genistein","ts",7.85855
+"2-Aminoisobutyric acid","ts",7.84962
+"L-Gulonic gamma-lactone","ts",7.7695
+"Ethylmalonic acid","ts",7.7499
+"2',4'-Dihydroxyacetophenone","ts",7.56679
+"Gaboxadol","ts",7.43041
+"Iminodiacetic acid","ts",7.32902
+"Glycochenodeoxycholate","ts",7.29174
+"Dihydrouracil","ts",7.23657
+"D-Lyxose","ts",7.16446
+"3alpha-Hydroxy-5alpha-androstan-17-one Androsterone","ts",7.12219
+"--Mevalonolactone","ts",7.01551
+"Azacitidine","ts",6.97675
+"3-Hydroxycapric acid","ts",6.97628
+"Hypotaurine","ts",6.97204
+"Met-Ser","ts",6.91932
+"Gly-Val","ts",6.90648
+"Hydroxybupropion","ts",6.89199
+"6-Aminocaproic acid","ts",6.8485
+"1-Aminocyclopropanecarboxylic acid","ts",6.77719
+"Arg-Trp","ts",6.72924
+"4-Aminobenzoate","ts",6.68864
+"Anthranilic acid Vitamin L1","ts",6.6873
+"Crotonic acid","ts",6.63447
+"Ajmalicine","ts",6.62319
+"5-Hydroxydopamine","ts",6.59461
+"L-homocysteic acid","ts",6.44041
+"Enterodiol","ts",6.42993
+"Diphenylamine","ts",6.41593
+"Loxapine","ts",6.33856
+"Mestranol","ts",6.31459
+"beta-Hydroxybutyrate","ts",6.23085
+"Luteolin","ts",6.182
+"3'-O-Methylinosine","ts",6.16824
+"2'-Deoxycytidine 5'-monophosphate dCMP","ts",6.16386
+"Guanidineacetic acid","ts",6.15428
+"Glu-Pro","ts",6.04679
+"2'-Deoxy-D-ribose","ts",6.04309
+"Glycerol 3-phosphate","ts",6.01488
+"L-Serine","ts",5.98107
+"2-Furoylglycine","ts",5.96733
+"5-Hydroxymethylcytidine","ts",5.95646
+"DL-Vanillylmandelic acid","ts",5.93402
+"Inosine 5'-monophosphate IMP","ts",5.92325
+"L-Saccharopine","ts",5.87914
+"Lys-Val","ts",5.8676
+"1-Methylhistamine","ts",5.83975
+"1-Aminocyclopropane-1-carboxylic acid","ts",5.79354
+"3-Carboxypropyltrimethylammonium cation","ts",5.70689
+"L-Glutamate","ts",5.67283
+"L-Ascorbic acid","ts",5.65058
+"Maltotriose","ts",5.60092
+"L-Tryptophan","ts",5.59078
+"Glycodeoxycholic acid","ts",5.57672
+"Betaine aldehyde","ts",5.56629
+"N,N-dimethylhistidine","ts",5.53018
+"alpha-D-Glucose 1-phosphate","ts",5.51506
+"Glycocholic acid","ts",5.47308
+"L-Arginine","ts",5.43908
+"3-Methoxytyramine","ts",5.34231
+"Dihydroxyfumarate","ts",5.32571
+"Cortisone","ts",5.3232
+"His-Val","ts",5.2632
+"Leu-Trp","ts",5.23823
+"1-Methylhistidine","ts",5.23779
+"Melatonin","ts",5.23171
+"6-Propyl-2-thiouracil","ts",5.2283
+"1-Palmitoylglycerol","ts",5.18062
+"Exemestane","ts",5.1681
+"beta-Octylglucoside","ts",5.12276
+"7,8-Dihydrobiopterin","ts",5.08158
+"Lys-Asp","ts",5.06283
+"Acetylcysteine","ts",5.05849
+"Dapsone","ts",4.97903
+"Glutaraldehyde","ts",4.96841
+"3,4-Dihydroxyphenylacetic acid","ts",4.94625
+"Agmatine","ts",4.93301
+"1-Aminocyclohexanecarboxylic acid","ts",4.91388
+"Monomethyl glutaric acid","ts",4.87668
+"Baclofen","ts",4.87529
+"1H-Indole-3-propanoic acid","ts",4.85086
+"Hypoxanthine","ts",4.84358
+"Arg-Thr","ts",4.83776
+"Famciclovir","ts",4.746
+"Ile-Trp","ts",4.56258
+"Glycerophosphocholine","ts",4.53286
+"Allantoate/Allantoic acid","ts",4.52709
+"N,N'-Diacetylchitobiose","ts",4.51348
+"Deoxyuridine monophosphate dUMP","ts",4.45087
+"D-Arabinono-1,4-lactone","ts",4.44736
+"6-Hydroxymelatonin","ts",4.40926
+"D-Mannose","ts",4.40192
+"2'-O-methylinosine","ts",4.3747
+"gamma-L-Glutamyl-L-valine","ts",4.34731
+"2-Hydroxyadenine","ts",4.3104
+"N1-Acetylspermidine","ts",4.30998
+"Demethylcitalopram","ts",4.25446
+"Apigenin 7-glucoside","ts",4.24116
+"Molsidomine","ts",4.22744
+"His-Gln","ts",4.16578
+"N1-Acetylspermine","ts",4.11337
+"Formononetin","ts",4.09389
+"Myristic acid","ts",4.08352
+"Alpha-N-Phenylacetyl-L-glutamine","ts",4.0766
+"2-Ethyl-2-Hydroxybutyric acid","ts",4.07366
+"Ketorolac","ts",4.02479
+"DL-2-Aminoadipic acid","ts",3.98932
+"2'-O-methylcytidine","ts",3.96836
+"Arg-Met","ts",3.85423
+"Diosmin","ts",3.84111
+"D-Pipecolinic acid","ts",3.83568
+"Adenine","ts",3.82503
+"Lys-Phe","ts",3.81133
+"L-Histidine","ts",3.79251
+"Acetylcarnitine","ts",3.7786
+"2-Phenylacetamide","ts",3.75763
+"N-omega-Hydroxyarginine","ts",3.70677
+"5-Hydroxyindoleacetate","ts",3.68958
+"D-Aspartic acid","ts",3.6363
+"3,4-Methylenedioxyamphetamine","ts",3.60658
+"Arg-Cys","ts",3.5928
+"Desipramine","ts",3.59199
+"cis-9-Palmitoleic acid","ts",3.55786
+"Deoxyguanosine","ts",3.5315
+"Acetyl-DL-Leucine","ts",3.5174
+"Indole-3-carboxylic acid","ts",3.50663
+"Corticosterone","ts",3.49519
+"Ala-Gly","ts",3.48757
+"Indole","ts",3.48246
+"3,3-Dimethylglutaric acid","ts",3.48023
+"Metaproterenol","ts",3.38991
+"cis-Aconitate","ts",3.37896
+"Arg-His","ts",3.31553
+"2-Thiocytidine","ts",3.30733
+"Guanidoacetic acid","ts",3.27923
+"Carbimazole","ts",3.25962
+"Ala-Val","ts",3.25138
+"Duloxetine","ts",3.2498
+"Ala-Phe","ts",3.22882
+"Benzylbutylphthalate","ts",3.2062
+"His-Pro","ts",3.17154
+"His-Met","ts",3.16115
+"N4-Acetylcytidine","ts",3.14644
+"Dehydroabietic acid","ts",3.13982
+"4-Guanidinobutyric acid","ts",3.11913
+"3'-O-methylguanosine","ts",3.0752
+"Fluoxetine","ts",3.06397
+"6-Methylmercaptopurine","ts",3.03684
+"Lavandulol","ts",3.03365
+"Ibuprofen","ts",3.02081
+"His-Cys","ts",3.01714
+"Ala-Ala","ts",3.01434
+"Ketoprofen","ts",2.97752
+"L-Palmitoylcarnitine","ts",2.97451
+"Creatine","ts",2.95041
+"Ile-Pro","ts",2.83328
+"L-Glutamine","ts",2.8092
+"Imidazole","ts",2.7982
+"D-Glucuronate","ts",2.78195
+"Adenosine 3',5'-cyclic phosphate cAMP","ts",2.78015
+"Ethyl glucuronide","ts",2.7627
+"2-Methylglutaric acid","ts",2.74767
+"Biopterin","ts",2.74727
+"Glu-Met","ts",2.74286
+".beta.-Cyano-L-alanine","ts",2.72579
+".alpha.-L-Glu-L-Asp","ts",2.72406
+"Hydrocortisone Cortisol","ts",2.65607
+"3-Ureidopropionate","ts",2.6521
+"L-Phenylalanine","ts",2.62994
+"Itaconic acid","ts",2.60766
+"Creatinine","ts",2.60221
+"Lycorine","ts",2.58675
+"Marmesin","ts",2.56772
+"L-Tetrahydropalmatine","ts",2.56248
+"5-Methyl-5,6-Dihydrouracil","ts",2.5532
+"beta-Hydroxyisovaleric acid","ts",2.5355
+"Decanoyl-L-carnitine","ts",2.472
+"Indole-3-pyruvic acid","ts",2.41264
+"3-Aminobutanoic acid","ts",2.39804
+"DL-Indole-3-lactic acid","ts",2.26584
+"Eicosapentaenoic acid","ts",2.244
+"R--Citronellic acid","ts",2.23652
+"21-Hydroxypregnenolone","ts",2.22705
+"Methylnoradrenaline","ts",2.21731
+"Cytidine","ts",2.18729
+"Homoveratric acid","ts",2.16586
+"Leu-Val","ts",2.15525
+"Cuminaldehyde","ts",2.09643
+"S-Citramalic acid","ts",2.06752
+"Homovanillic acid","ts",2.05686
+"Guanidinosuccinic acid","ts",2.01971
+"Lys-Asn","ts",2.00751
+"Ethyl 3-hydroxybutyrate","ts",2.00304
+"Carbenicillin","ts",1.9993
+"3-methylcytidine","ts",1.96649
+"4-Hexen-1-ol, E-","ts",1.94558
+"1-Indanone","ts",1.94321
+"Mepivacaine","ts",1.92692
+"Lys-Pro","ts",1.92347
+"Argininosuccinic acid","ts",1.85606
+"1S,9R-Hydrastine","ts",1.8318
+".gamma.-L-Glu-.epsilon.-L-Lys","ts",1.79108
+"Methylergonovine","ts",1.76343
+"Adenosine","ts",1.7043
+"Ethionamide","ts",1.68274
+"3-Phenylpropanoic acid","ts",1.6349
+"Aminopterin","ts",1.63455
+"His-Arg","ts",1.54959
+"2-Isopropylmalic acid","ts",1.54013
+"Metyrapone","ts",1.52264
+".beta.-Homoproline","ts",1.51218
+"IS","ts",1.50834
+"3-Methoxy-4-Hydroxyphenylglycol Sulfate","ts",1.49983
+"4-Isopropylbenzoic acid","ts",1.49544
+"gamma-L-Glutamyl-L-glutamic acid","ts",1.4932
+"3,4-Dihydroxymandelic acid","ts",1.4836
+"alpha-N-Acetyl-L-glutamine","ts",1.48103
+"1-Methylnicotinamide","ts",1.4697
+"6-Hydroxynicotinic acid","ts",1.4573
+"3-Aminobenzoic acid","ts",1.43578
+"2'-Deoxyadenosine 5'-monophosphate dAMP","ts",1.41521
+"-alpha-Pinene","ts",1.40217
+"Matrine","ts",1.38873
+"Dimethylallyl pyrophosphate","ts",1.37236
+"2-Oxoadipic acid","ts",1.36926
+"3-Hydroxybenzoate","ts",1.33103
+"3-Methylhistamine","ts",1.30188
+"Diaminopimelic acid","ts",1.30083
+"Ethyl hydrogen malonate","ts",1.25801
+"1-Naphthol","ts",1.25291
+"5-Methylcytosine","ts",1.23794
+"Ile-Asn","ts",1.22947
+"D-Xylose","ts",1.19098
+"DL-a-Hydroxybutyric acid","ts",1.18611
+"3-Hydroxyisovaleric acid","ts",1.17354
+"L-Tyrosine","ts",1.15695
+"Ile-Glu","ts",1.1273
+"Enalaprilat","ts",1.10681
+"Ala-Pro","ts",1.08857
+"Matairesinol","ts",1.04586
+"Chloroquine","ts",1.02392
+"Acetohydroxamic acid","ts",1.01218
+"Altretamine","ts",0.92688
+"8-Hydroxy-2'-deoxyguanosine","ts",0.92594
+"Arg-Arg","ts",0.92529
+"3-Aminosalicylic acid","ts",0.84381
+"5'-Deoxyadenosine","ts",0.78417
+"Arg-Phe","ts",0.78288
+"Kynuramine","ts",0.77424
+"all cis-6,9,12-Linolenic acid","ts",0.74795
+"N6-Methyl-L-lysine","ts",0.72852
+"2-Methylbutyroylcarnitine","ts",0.69897
+"3-Methylphenylacetic acid","ts",0.69791
+"Ile-His","ts",0.69189
+"12-oxo-ETE","ts",0.6688
+"L-2-Aminobutyric acid","ts",0.66477
+"Lys-Ser","ts",0.63252
+"L-Pyroglutamic acid","ts",0.6005
+"1-Stearoyl-rac-glycerol","ts",0.48641
+"Levulinic acid","ts",0.48349
+"DL-Arginine","ts",0.46297
+"DL-3-Phenyllactic acid","ts",0.46158
+"4,6-Diamino-5-formamidopyrimidine","ts",0.45906
+"Harmine","ts",0.45861
+"4',5-Dihydroxy-7-methoxyflavanone","ts",0.45469
+"L-Proline","ts",0.45457
+"Bisdemethoxycurcumin","ts",0.44908
+"5-Methylcytidine","ts",0.44497
+"2-Ethoxyethanol","ts",0.44382
+"Arg-Tyr","ts",0.44156
+"Lys-Lys","ts",0.43806
+"4-Hydroxybutanoic acid lactone","ts",0.4286
+"Cytosine","ts",0.39278
+"1,2,3-Benzenetriol","ts",0.3925
+"Arg-Val","ts",0.38099
+"5d-Aminolevulinic Acid","ts",0.37714
+"Muramic acid","ts",0.37513
+"D-Galactarate","ts",0.35949
+"Indoleacetic acid","ts",0.34004
+"EDTA","ts",0.23887
+"R-3-Hydroxybutyric acid","ts",0.16363
+"5alpha-Tetrahydrocorticosterone","ts",0.1381
+"Acetylglycine","ts",0.11335
+"4-Hydroxybenzaldehyde","ts",0.09865
+"3,3-Dimethylacrylic acid","ts",0.09179
+"Ala-Gln","ts",0.07074
+"L-Asparagine","ts",0.06515
+"Epinephrine","ts",0.05795
+"N6,N6,N6-Trimethyl-L-lysine","ts",0.02691
+"Hydroxyproline","ts",0.02492
+"Met-Lys","ts",0.01311
