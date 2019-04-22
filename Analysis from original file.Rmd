@@ -14,7 +14,7 @@ pos_ori <- read.csv("data/pos-ori.csv", stringsAsFactors = F)
 
 pos_ms2 <- dplyr::select(pos_ori, id, MS2.name)  #select metabolites id and MS2 names
 pos_ms2$MS2.name <- as.character(pos_ms2$MS2.name)
-
+pos_inf <- dplyr::select(pos_ori, id, MS2.name, mzmed,rtmed)  #select metabolites id and MS2 names
 
 pos_pro <- dplyr::select(pos_ori, -2, -3, -4, -5, -6, -7, -8)  #select feature profiles for each sample
 
@@ -323,9 +323,10 @@ pls_times_result_pos <- left_join(pls_times_result_pos,ab_vip_d,by="mid")
 pls_times_result_pos <- left_join(pls_times_result_pos,bc_vip_d,by="mid")
 write.csv(pls_times_result_pos,"data/PLSDA and time series results_pos.csv")
 pls.time.vip <- dplyr::filter(pls_times_result_pos,ac_vip_c1>2|ab_vip_c1>2|bc_vip_c1>2)
-
+pls.time.vipAC <- dplyr::filter(pls_times_result_pos,ac_vip_c1>2)
 pls.time.vip2 <- dplyr::filter(pls.time.vip,Hotelling.T2>99)
 write.csv(pls.time.vip,"data/metabolites VIP over 2.csv",row.names = F)
+write.csv(pls.time.vipAC,"data/pls.time.vipAC.csv",row.names = F)
 ```
 
 
@@ -351,15 +352,36 @@ mstus_pos <- dplyr::select(mstus_pos,sample,class,everything())
 
 mstusABC_pos <- dplyr::slice(mstus_pos,1:48)
 
+pls.time.vipAC2 <- dplyr::slice(pls.time.vipAC,-38,-13,-21,-7)
 mid <- pls.time.vip$mid
+midAC2 <- pls.time.vipAC2$mid
 sampid <- mstusABC_pos$sample
 classid <- mstusABC_pos$class
 
-vip.file.pos <- mstusABC_pos[,colnames(mstusABC_pos)%in% mid]
+vip.file.pos <- mstusABC_pos[,colnames(mstusABC_pos) %in% mid]
 vip.file.pos$sample <- sampid
 vip.file.pos$class <- classid
 
+rt_mz_pos <- pos_inf[pos_inf$MS2.name %in% midAC,]
+rt_mz_pos <- dplyr::rename(rt_mz_pos,mid=MS2.name)
+met_inf <- left_join(rt_mz_pos,pls.time.vipAC,by="mid")
+write.csv(met_inf,"data/information of metabolites selected_pos.csv",row.names = F)
 
+rt_mz_pos2 <- pos_inf[pos_inf$MS2.name %in% midAC2,]
+rt_mz_pos2 <- dplyr::rename(rt_mz_pos2,mid=MS2.name)
+met_inf2 <- left_join(rt_mz_pos2,pls.time.vipAC2,by="mid")
+write.csv(met_inf2,"data/information of metabolites selected_pos2.csv",row.names = F)
+
+
+vip.file.posAC <- mstusABC_pos[,colnames(mstusABC_pos) %in% midAC]
+vip.file.posAC$sample <- sampid
+vip.file.posAC$class <- classid
+
+vip.file.posAC2 <- mstusABC_pos[,colnames(mstusABC_pos) %in% midAC2]
+vip.file.posAC2$sample <- sampid
+vip.file.posAC2$class <- classid
+
+write.csv(vip.file.posAC,"data/vip.file.posAC.csv",row.names = F)
 
 vip.file.pos1 <- dplyr::select(vip.file.pos,sample,class,1:9)
 vip.file.pos2 <- dplyr::select(vip.file.pos,sample,class,10:18)
@@ -375,24 +397,22 @@ vip.p.pos3 <- gather(vip.file.pos3,key="mid",value = "Abundance",-sample,-class)
 vip.p.pos4 <- gather(vip.file.pos4,key="mid",value = "Abundance",-sample,-class)
 vip.p.pos5 <- gather(vip.file.pos5,key="mid",value = "Abundance",-sample,-class)
 vip.p.pos6 <- gather(vip.file.pos6,key="mid",value = "Abundance",-sample,-class)
+
+vip.p.posAC <- gather(vip.file.posAC, key = "mid", value = "Abundance",-sample, -class)
+vip.p.posAC2 <- gather(vip.file.posAC2, key = "mid", value = "Abundance",-sample, -class)
 ```
-
-```{r metabolites table,echo=FALSE}
-library(tidyverse)
-vip.print <- dplyr::rename(pls.time.vip2,Metabolites=mid,T2=Hotelling.T2,VIP_ac=ac_vip_c1,VIP_ab=ab_vip_c1,VIP_bc=bc_vip_c1)
-
-knitr::kable(
-vip.print,caption = "T2 and VIP value of selected metabolites",digits=2,align="c"
-)
-```
-
-
 
 ```{r plot 1,warning=FALSE,echo=FALSE}
 library(tidyverse)
 p1 <- ggplot(data=vip.p.pos1,mapping = aes(x=class,y=Abundance))+geom_boxplot()+facet_wrap(~mid,nrow = 3)
 p1+ylim(0,0.002)+xlab("Dietary pattern")+ggtitle("尿液代谢产物在不同膳食模式下的峰面积变化图1")+theme(plot.title=element_text(size=rel(1.5), lineheight=.9, hjust=0.5,family="Times"))
 
+
+p2 <- ggplot(data=vip.p.posAC,mapping = aes(x=class,y=Abundance))+geom_boxplot()+facet_wrap(~mid,nrow = 6)
+p2+ylim(0,0.003)+xlab("Dietary pattern")+theme(plot.title=element_text(size=rel(1.5), lineheight=.9, hjust=0.5,family="Times"))
+
+p3 <- ggplot(data=vip.p.posAC2,mapping = aes(x=class,y=Abundance))+geom_boxplot()+facet_wrap(~mid,nrow = 8)+theme(strip.text.x = element_text(size =15,family="Times"))
+p3+ylim(0,0.003)+xlab("Dietary pattern")+theme(text=element_text(size=20, lineheight=.9, hjust=0.5,family="Times"))
 ```
 
 
