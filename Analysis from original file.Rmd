@@ -238,6 +238,41 @@ ab_vip_d <- dplyr::select(ab_vip_d,ab_vip_c1='Comp. 1')
 write.csv(ab_vip_d,"data/ab plsda vip_pos.csv")
 ```
 
+```{r PLS analysis of AD using MetadoAnalystR,include=FALSE}
+library(MetaboAnalystR)
+
+ad_posMS2$Label=c(1:16,-1:-16)
+ad_posMS2 <- ad_posMS2 %>% dplyr::select(sample,Label,everything()) %>% dplyr::select(-class)
+
+write.csv(ad_posMS2,"data/ad_posMS2.csv",row.names = F)
+
+ad_pls<-InitDataObjects("conc", "stat", TRUE)
+ad_pls<-Read.TextData(ad_pls, "data/ad_posMS2.csv", "rowp", "disc");
+ad_pls<-SanityCheckData(ad_pls)
+ad_pls<-ReplaceMin(ad_pls);
+ad_pls<-PreparePrenormData(ad_pls)
+ad_pls<-Normalization(ad_pls, "NULL", "NULL", "NULL", ratio=FALSE, ratioNum=20)
+
+ad_pls<-PLSR.Anal(ad_pls, reg=TRUE)
+
+ad_pls<-PlotPLSPairSummary(ad_pls, "figure/MetaboAnalystR_PLSDA/ad pls summary_pos", "png", 72, width=NA, 5)
+
+ad_pls<-PlotPLS2DScore(ad_pls, "figure/MetaboAnalystR_PLSDA/ad pls 2D score plot_pos", "png", 72, width=NA, 1,2,0.95,0,0)
+
+ad_pls<-PlotPLSLoading(ad_pls, "figure/MetaboAnalystR_PLSDA/ad pls loading_pos", "png", 72, width=NA, 1, 2);
+
+ad_pls<-PLSDA.CV(ad_pls, "T",5, "Q2")
+ad_pls<-PlotPLS.Classification(ad_pls, "figure/MetaboAnalystR_PLSDA/ad pls cross validation_pos", "png", 72, width=NA)
+
+ad_pls_vip<-PlotPLS.Imp(ad_pls, "figure/MetaboAnalystR_PLSDA/ad pls_vip_pos", "png", 72, width=NA, "vip", "Comp. 1", 15,FALSE)
+
+ad_vip <- ad_pls_vip$analSet$plsda$vip.mat
+
+ad_vip_d <- as.data.frame(ad_vip)
+ad_vip_d <- dplyr::select(ad_vip_d,ad_vip_c1='Comp. 1')
+
+write.csv(ad_vip_d,"data/ad plsda vip_pos.csv")
+```
 
 ```{r PLS analysis of BC using MetbcoAnalystR,include=FALSE}
 library(MetaboAnalystR)
@@ -277,13 +312,125 @@ write.csv(bc_vip_d,"data/bc plsda vip_pos.csv")
 
 
 
+```{r PLSDA and time series based variable selection, include=F}
+library(tidyverse)
+timese_result <- timese_result %>% dplyr::select(-type) %>% add_rownames("mid")
+ac_vip_d <- add_rownames(ac_vip_d,"mid")
+ab_vip_d <- add_rownames(ab_vip_d,"mid")
+bc_vip_d <- add_rownames(bc_vip_d,"mid")
+pls_times_result_pos <- left_join(timese_result,ac_vip_d,by="mid")
+pls_times_result_pos <- left_join(pls_times_result_pos,ab_vip_d,by="mid")
+pls_times_result_pos <- left_join(pls_times_result_pos,bc_vip_d,by="mid")
+write.csv(pls_times_result_pos,"data/PLSDA and time series results_pos.csv")
+pls.time.vip <- dplyr::filter(pls_times_result_pos,ac_vip_c1>2|ab_vip_c1>2|bc_vip_c1>2)
+
+pls.time.vip2 <- dplyr::filter(pls.time.vip,Hotelling.T2>99)
+write.csv(pls.time.vip,"data/metabolites VIP over 2.csv",row.names = F)
+```
 
 
 
+```{r data files for plotting, include=F}
+
+mstus_pos <- read.csv("data/mstus_pos.csv",stringsAsFactors = F,header = F)
+colnames(mstus_pos) <- mstus_pos[1,]
+mstus_pos <- as.data.frame(mstus_pos[-1,])
+mstus_col <- names(mstus_pos) %>% str_replace("X","")
+names(mstus_pos) <- mstus_col
+mstus_pos <- dplyr::select(mstus_pos,-class)
+
+colnames(mstus_pos) <- pos_ms2$MS2.name[match(names(mstus_pos),pos_ms2$id)]
+
+
+colmstus <- names(mstus_pos)
+colmstus[is.na(colmstus)] <- "sample"
+names(mstus_pos) <- colmstus
+mstus_pos <- mstus_pos %>% dplyr::arrange(sample)%>% dplyr::slice(-43,-44,-61,-62)
+mstus_pos$class <- rep(c("A diet","B diet","C diet","D diet"),times=c(16,16,16,16))
+mstus_pos <- dplyr::select(mstus_pos,sample,class,everything())
+
+mstusABC_pos <- dplyr::slice(mstus_pos,1:48)
+
+mid <- pls.time.vip$mid
+sampid <- mstusABC_pos$sample
+classid <- mstusABC_pos$class
+
+vip.file.pos <- mstusABC_pos[,colnames(mstusABC_pos)%in% mid]
+vip.file.pos$sample <- sampid
+vip.file.pos$class <- classid
 
 
 
+vip.file.pos1 <- dplyr::select(vip.file.pos,sample,class,1:9)
+vip.file.pos2 <- dplyr::select(vip.file.pos,sample,class,10:18)
+vip.file.pos3 <- dplyr::select(vip.file.pos,sample,class,19:27)
+vip.file.pos4 <- dplyr::select(vip.file.pos,sample,class,28:36)
+vip.file.pos5 <- dplyr::select(vip.file.pos,sample,class,37:45)
+vip.file.pos6 <- dplyr::select(vip.file.pos,sample,class,46:54)
 
+
+vip.p.pos1 <- gather(vip.file.pos1,key="mid",value = "Abundance",-sample,-class)
+vip.p.pos2 <- gather(vip.file.pos2,key="mid",value = "Abundance",-sample,-class)
+vip.p.pos3 <- gather(vip.file.pos3,key="mid",value = "Abundance",-sample,-class)
+vip.p.pos4 <- gather(vip.file.pos4,key="mid",value = "Abundance",-sample,-class)
+vip.p.pos5 <- gather(vip.file.pos5,key="mid",value = "Abundance",-sample,-class)
+vip.p.pos6 <- gather(vip.file.pos6,key="mid",value = "Abundance",-sample,-class)
+```
+
+```{r metabolites table,echo=FALSE}
+library(tidyverse)
+vip.print <- dplyr::rename(pls.time.vip2,Metabolites=mid,T2=Hotelling.T2,VIP_ac=ac_vip_c1,VIP_ab=ab_vip_c1,VIP_bc=bc_vip_c1)
+
+knitr::kable(
+vip.print,caption = "T2 and VIP value of selected metabolites",digits=2,align="c"
+)
+```
+
+
+
+```{r plot 1,warning=FALSE,echo=FALSE}
+library(tidyverse)
+p1 <- ggplot(data=vip.p.pos1,mapping = aes(x=class,y=Abundance))+geom_boxplot()+facet_wrap(~mid,nrow = 3)
+p1+ylim(0,0.002)+xlab("Dietary pattern")+ggtitle("尿液代谢产物在不同膳食模式下的峰面积变化图1")+theme(plot.title=element_text(size=rel(1.5), lineheight=.9, hjust=0.5,family="Times"))
+
+```
+
+
+```{r plot 2,warning=FALSE,echo=FALSE}
+library(tidyverse)
+p2 <- ggplot(data=vip.p.pos2,mapping = aes(x=class,y=Abundance))+geom_boxplot()+facet_wrap(~mid,nrow = 3)
+p2+ylim(0,0.002)+xlab("Dietary pattern")+ggtitle("尿液代谢产物在不同膳食模式下的峰面积变化图2")+theme(plot.title=element_text(size=rel(1.5), lineheight=.9, hjust=0.5,family="Times"))
+
+```
+
+```{r plot 3,warning=FALSE,echo=FALSE}
+library(tidyverse)
+p3 <- ggplot(data=vip.p.pos3,mapping = aes(x=class,y=Abundance))+geom_boxplot()+facet_wrap(~mid,nrow = 3)
+p3+ylim(0,0.002)+xlab("Dietary pattern")+ggtitle("尿液代谢产物在不同膳食模式下的峰面积变化图3")+theme(plot.title=element_text(size=rel(1.5), lineheight=.9, hjust=0.5,family="Times"))
+
+```
+
+
+```{r plot 4,warning=FALSE,echo=FALSE}
+library(tidyverse)
+p4 <- ggplot(data=vip.p.pos4,mapping = aes(x=class,y=Abundance))+geom_boxplot()+facet_wrap(~mid,nrow = 3)
+p4+ylim(0,0.002)+xlab("Dietary pattern")+ggtitle("尿液代谢产物在不同膳食模式下的峰面积变化图4")+theme(plot.title=element_text(size=rel(1.5), lineheight=.9, hjust=0.5,family="Times"))
+
+```
+
+```{r plot 5,warning=FALSE,echo=FALSE}
+library(tidyverse)
+p5 <- ggplot(data=vip.p.pos3,mapping = aes(x=class,y=Abundance))+geom_boxplot()+facet_wrap(~mid,nrow = 3)
+p5+ylim(0,0.002)+xlab("Dietary pattern")+ggtitle("尿液代谢产物在不同膳食模式下的峰面积变化图5")+theme(plot.title=element_text(size=rel(1.5), lineheight=.9, hjust=0.5,family="Times"))
+
+```
+
+```{r plot 6,warning=FALSE,echo=FALSE}
+library(tidyverse)
+p6 <- ggplot(data=vip.p.pos6,mapping = aes(x=class,y=Abundance))+geom_boxplot()+facet_wrap(~mid,nrow = 3)
+p6+ylim(0,0.002)+xlab("Dietary pattern")+ggtitle("尿液代谢产物在不同膳食模式下的峰面积变化图6")+theme(plot.title=element_text(size=rel(1.5), lineheight=.9, hjust=0.5,family="Times"))
+
+```
 
 
 ```{r  AC mixOmics analysis, include=FALSE}
