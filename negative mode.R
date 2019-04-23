@@ -9,7 +9,7 @@ neg_ori <- read.csv("data/neg-ori.csv", stringsAsFactors = F)
 neg_ms2 <- dplyr::select(neg_ori, id, MS2.name)  #select metabolites id and MS2 names
 neg_ms2$MS2.name <- as.character(neg_ms2$MS2.name)
 
-
+neg_inf <- dplyr::select(neg_ori, id, MS2.name, mzmed,rtmed)  #select metabolites id and MS2 names
 neg_pro <- dplyr::select(neg_ori, -2, -3, -4, -5, -6, -7, -8)  #select feature profiles for each sample
 
 sampid <- names(neg_pro) %>% str_replace("[0-9][0-9]_neg\\.[ABCD]|[0-9][0-9]_neg\\.QC", "")
@@ -121,18 +121,18 @@ write.csv(abc_negMS2,"data/time series ABC_neg.csv",row.names = F)
 library(MetaboAnalystR)
 
 
-mSet<-InitDataObjects("conc", "ts", FALSE)
-mSet<-SetDesignType(mSet, "time0")
-mSet<-Read.TextData(mSet, "data/time series ABC_neg.csv", "rowts", "disc");
-mSet<-SanityCheckData(mSet)
-mSet<-ReplaceMin(mSet);
-mSet<-SanityCheckData(mSet)
-mSet<-ReplaceMin(mSet);
-mSet<-PreparePrenormData(mSet)
-mSet<-Normalization(mSet, "NULL", "NULL", "NULL", ratio=FALSE, ratioNum=20)
-timese<-performMB(mSet, 10)
-timese_result <- as.data.frame(timese$analSet)
-write.csv(timese_result,"data/time series-ABC-results_neg.csv")
+mSet.neg<-InitDataObjects("conc", "ts", FALSE)
+mSet.neg<-SetDesignType(mSet.neg, "time0")
+mSet.neg<-Read.TextData(mSet.neg, "data/time series ABC_neg.csv", "rowts", "disc");
+mSet.neg<-SanityCheckData(mSet.neg)
+mSet.neg<-ReplaceMin(mSet.neg);
+mSet.neg<-SanityCheckData(mSet.neg)
+mSet.neg<-ReplaceMin(mSet.neg);
+mSet.neg<-PreparePrenormData(mSet.neg)
+mSet.neg<-Normalization(mSet.neg, "NULL", "NULL", "NULL", ratio=FALSE, ratioNum=20)
+timese.neg<-performMB(mSet.neg, 10)
+timese_result.neg <- as.data.frame(timese.neg$analSet)
+write.csv(timese_result.neg,"data/time series-ABC-results_neg.csv")
 
 library(MetaboAnalystR)
 
@@ -141,32 +141,32 @@ ac_negMS2 <- ac_negMS2 %>% dplyr::select(sample,Label,everything()) %>% dplyr::s
 
 write.csv(ac_negMS2,"data/ac_negMS2.csv",row.names = F)
 
-ac_pls<-InitDataObjects("conc", "stat", TRUE)
-ac_pls<-Read.TextData(ac_pls, "data/ac_negMS2.csv", "rowp", "disc");
-ac_pls<-SanityCheckData(ac_pls)
-ac_pls<-ReplaceMin(ac_pls);
-ac_pls<-PreparePrenormData(ac_pls)
-ac_pls<-Normalization(ac_pls, "NULL", "NULL", "NULL", ratio=FALSE, ratioNum=20)
+ac_pls.neg<-InitDataObjects("conc", "stat", TRUE)
+ac_pls.neg<-Read.TextData(ac_pls.neg, "data/ac_negMS2.csv", "rowp", "disc");
+ac_pls.neg<-SanityCheckData(ac_pls.neg)
+ac_pls.neg<-ReplaceMin(ac_pls.neg);
+ac_pls.neg<-PreparePrenormData(ac_pls.neg)
+ac_pls.neg<-Normalization(ac_pls.neg, "NULL", "NULL", "NULL", ratio=FALSE, ratioNum=20)
 
-ac_pls<-PLSR.Anal(ac_pls, reg=TRUE)
+ac_pls.neg<-PLSR.Anal(ac_pls.neg, reg=TRUE)
 
-ac_pls<-PlotPLSPairSummary(ac_pls, "figure/MetaboAnalystR_PLSDA/ac pls summary_neg", "png", 72, width=NA, 5)
+ac_pls.neg<-PlotPLSPairSummary(ac_pls.neg, "figure/MetaboAnalystR_PLSDA/ac pls summary_neg", "png", 72, width=NA, 5)
 
-ac_pls<-PlotPLS2DScore(ac_pls, "figure/MetaboAnalystR_PLSDA/ac pls 2D score plot_neg", "png", 72, width=NA, 1,2,0.95,0,0)
+ac_pls.neg<-PlotPLS2DScore(ac_pls.neg, "figure/MetaboAnalystR_PLSDA/ac pls 2D score plot_neg", "png", 72, width=NA, 1,2,0.95,0,0)
 
-ac_pls<-PlotPLSLoading(ac_pls, "figure/MetaboAnalystR_PLSDA/ac pls loading_neg", "png", 72, width=NA, 1, 2);
+ac_pls.neg<-PlotPLSLoading(ac_pls.neg, "figure/MetaboAnalystR_PLSDA/ac pls loading_neg", "png", 72, width=NA, 1, 2);
 
-ac_pls<-PLSDA.CV(ac_pls, "T",5, "Q2")
-ac_pls<-PlotPLS.Classification(ac_pls, "figure/MetaboAnalystR_PLSDA/ac pls cross validation_neg", "png", 72, width=NA)
+ac_pls.neg<-PLSDA.CV(ac_pls.neg, "T",5, "Q2")
+ac_pls.neg<-PlotPLS.Classification(ac_pls.neg, "figure/MetaboAnalystR_PLSDA/ac pls cross validation_neg", "png", 72, width=NA)
 
-ac_pls_vip<-PlotPLS.Imp(ac_pls, "figure/MetaboAnalystR_PLSDA/ac pls_vip_neg", "png", 72, width=NA, "vip", "Comp. 1", 15,FALSE)
+ac_pls_vip.neg<-PlotPLS.Imp(ac_pls.neg, "figure/MetaboAnalystR_PLSDA/ac pls_vip_neg", "png", 72, width=NA, "vip", "Comp. 1", 15,FALSE)
 
-ac_vip <- ac_pls_vip$analSet$plsda$vip.mat
+ac_vip.neg <- ac_pls_vip.neg$analSet$plsda$vip.mat
 
-ac_vip_d <- as.data.frame(ac_vip)
-ac_vip_d <- dplyr::select(ac_vip_d,ac_vip_c1='Comp. 1')
+ac_vip_d.neg <- as.data.frame(ac_vip.neg)
+ac_vip_d.neg <- dplyr::select(ac_vip_d.neg,ac_vip_c1='Comp. 1')
 
-write.csv(ac_vip_d,"data/ac plsda vip_neg.csv")
+write.csv(ac_vip_d.neg,"data/ac plsda vip_neg.csv")
 
 
 library(MetaboAnalystR)
@@ -176,32 +176,32 @@ ab_negMS2 <- ab_negMS2 %>% dplyr::select(sample,Label,everything()) %>% dplyr::s
 
 write.csv(ab_negMS2,"data/ab_negMS2.csv",row.names = F)
 
-ab_pls<-InitDataObjects("conc", "stat", TRUE)
-ab_pls<-Read.TextData(ab_pls, "data/ab_negMS2.csv", "rowp", "disc");
-ab_pls<-SanityCheckData(ab_pls)
-ab_pls<-ReplaceMin(ab_pls);
-ab_pls<-PreparePrenormData(ab_pls)
-ab_pls<-Normalization(ab_pls, "NULL", "NULL", "NULL", ratio=FALSE, ratioNum=20)
+ab_pls.neg<-InitDataObjects("conc", "stat", TRUE)
+ab_pls.neg<-Read.TextData(ab_pls.neg, "data/ab_negMS2.csv", "rowp", "disc");
+ab_pls.neg<-SanityCheckData(ab_pls.neg)
+ab_pls.neg<-ReplaceMin(ab_pls.neg);
+ab_pls.neg<-PreparePrenormData(ab_pls.neg)
+ab_pls.neg<-Normalization(ab_pls.neg, "NULL", "NULL", "NULL", ratio=FALSE, ratioNum=20)
 
-ab_pls<-PLSR.Anal(ab_pls, reg=TRUE)
+ab_pls.neg<-PLSR.Anal(ab_pls.neg, reg=TRUE)
 
-ab_pls<-PlotPLSPairSummary(ab_pls, "figure/MetaboAnalystR_PLSDA/ab pls summary_neg", "png", 72, width=NA, 5)
+ab_pls.neg<-PlotPLSPairSummary(ab_pls.neg, "figure/MetaboAnalystR_PLSDA/ab pls summary_neg", "png", 72, width=NA, 5)
 
-ab_pls<-PlotPLS2DScore(ab_pls, "figure/MetaboAnalystR_PLSDA/ab pls 2D score plot_neg", "png", 72, width=NA, 1,2,0.95,0,0)
+ab_pls.neg<-PlotPLS2DScore(ab_pls.neg, "figure/MetaboAnalystR_PLSDA/ab pls 2D score plot_neg", "png", 72, width=NA, 1,2,0.95,0,0)
 
-ab_pls<-PlotPLSLoading(ab_pls, "figure/MetaboAnalystR_PLSDA/ab pls loading_neg", "png", 72, width=NA, 1, 2);
+ab_pls.neg<-PlotPLSLoading(ab_pls.neg, "figure/MetaboAnalystR_PLSDA/ab pls loading_neg", "png", 72, width=NA, 1, 2);
 
-ab_pls<-PLSDA.CV(ab_pls, "T",5, "Q2")
-ab_pls<-PlotPLS.Classification(ab_pls, "figure/MetaboAnalystR_PLSDA/ab pls cross validation_neg", "png", 72, width=NA)
+ab_pls.neg<-PLSDA.CV(ab_pls.neg, "T",5, "Q2")
+ab_pls.neg<-PlotPLS.Classification(ab_pls.neg, "figure/MetaboAnalystR_PLSDA/ab pls cross validation_neg", "png", 72, width=NA)
 
-ab_pls_vip<-PlotPLS.Imp(ab_pls, "figure/MetaboAnalystR_PLSDA/ab pls_vip_neg", "png", 72, width=NA, "vip", "Comp. 1", 15,FALSE)
+ab_pls_vip.neg<-PlotPLS.Imp(ab_pls.neg, "figure/MetaboAnalystR_PLSDA/ab pls_vip_neg", "png", 72, width=NA, "vip", "Comp. 1", 15,FALSE)
 
-ab_vip <- ab_pls_vip$analSet$plsda$vip.mat
+ab_vip.neg <- ab_pls_vip.neg$analSet$plsda$vip.mat
 
-ab_vip_d <- as.data.frame(ab_vip)
-ab_vip_d <- dplyr::select(ab_vip_d,ab_vip_c1='Comp. 1')
+ab_vip_d.neg <- as.data.frame(ab_vip.neg)
+ab_vip_d.neg <- dplyr::select(ab_vip_d.neg,ab_vip_c1='Comp. 1')
 
-write.csv(ab_vip_d,"data/ab plsda vip_neg.csv")
+write.csv(ab_vip_d.neg,"data/ab plsda vip_neg.csv")
 
 
 
@@ -213,32 +213,32 @@ ad_negMS2 <- ad_negMS2 %>% dplyr::select(sample,Label,everything()) %>% dplyr::s
 
 write.csv(ad_negMS2,"data/ad_negMS2.csv",row.names = F)
 
-ad_pls<-InitDataObjects("conc", "stat", TRUE)
-ad_pls<-Read.TextData(ad_pls, "data/ad_negMS2.csv", "rowp", "disc");
-ad_pls<-SanityCheckData(ad_pls)
-ad_pls<-ReplaceMin(ad_pls);
-ad_pls<-PreparePrenormData(ad_pls)
-ad_pls<-Normalization(ad_pls, "NULL", "NULL", "NULL", ratio=FALSE, ratioNum=20)
+ad_pls.neg<-InitDataObjects("conc", "stat", TRUE)
+ad_pls.neg<-Read.TextData(ad_pls.neg, "data/ad_negMS2.csv", "rowp", "disc");
+ad_pls.neg<-SanityCheckData(ad_pls.neg)
+ad_pls.neg<-ReplaceMin(ad_pls.neg);
+ad_pls.neg<-PreparePrenormData(ad_pls.neg)
+ad_pls.neg<-Normalization(ad_pls.neg, "NULL", "NULL", "NULL", ratio=FALSE, ratioNum=20)
 
-ad_pls<-PLSR.Anal(ad_pls, reg=TRUE)
+ad_pls.neg<-PLSR.Anal(ad_pls.neg, reg=TRUE)
 
-ad_pls<-PlotPLSPairSummary(ad_pls, "figure/MetaboAnalystR_PLSDA/ad pls summary_neg", "png", 72, width=NA, 5)
+ad_pls.neg<-PlotPLSPairSummary(ad_pls.neg, "figure/MetaboAnalystR_PLSDA/ad pls summary_neg", "png", 72, width=NA, 5)
 
-ad_pls<-PlotPLS2DScore(ad_pls, "figure/MetaboAnalystR_PLSDA/ad pls 2D score plot_neg", "png", 72, width=NA, 1,2,0.95,0,0)
+ad_pls.neg<-PlotPLS2DScore(ad_pls.neg, "figure/MetaboAnalystR_PLSDA/ad pls 2D score plot_neg", "png", 72, width=NA, 1,2,0.95,0,0)
 
-ad_pls<-PlotPLSLoading(ad_pls, "figure/MetaboAnalystR_PLSDA/ad pls loading_neg", "png", 72, width=NA, 1, 2);
+ad_pls.neg<-PlotPLSLoading(ad_pls.neg, "figure/MetaboAnalystR_PLSDA/ad pls loading_neg", "png", 72, width=NA, 1, 2);
 
-ad_pls<-PLSDA.CV(ad_pls, "T",5, "Q2")
-ad_pls<-PlotPLS.Classification(ad_pls, "figure/MetaboAnalystR_PLSDA/ad pls cross validation_neg", "png", 72, width=NA)
+ad_pls.neg<-PLSDA.CV(ad_pls.neg, "T",5, "Q2")
+ad_pls.neg<-PlotPLS.Classification(ad_pls.neg, "figure/MetaboAnalystR_PLSDA/ad pls cross validation_neg", "png", 72, width=NA)
 
-ad_pls_vip<-PlotPLS.Imp(ad_pls, "figure/MetaboAnalystR_PLSDA/ad pls_vip_neg", "png", 72, width=NA, "vip", "Comp. 1", 15,FALSE)
+ad_pls_vip.neg<-PlotPLS.Imp(ad_pls.neg, "figure/MetaboAnalystR_PLSDA/ad pls_vip_neg", "png", 72, width=NA, "vip", "Comp. 1", 15,FALSE)
 
-ad_vip <- ad_pls_vip$analSet$plsda$vip.mat
+ad_vip.neg <- ad_pls_vip.neg$analSet$plsda$vip.mat
 
-ad_vip_d <- as.data.frame(ad_vip)
-ad_vip_d <- dplyr::select(ad_vip_d,ad_vip_c1='Comp. 1')
+ad_vip_d.neg <- as.data.frame(ad_vip.neg)
+ad_vip_d.neg <- dplyr::select(ad_vip_d.neg,ad_vip_c1='Comp. 1')
 
-write.csv(ad_vip_d,"data/ad plsda vip_neg.csv")
+write.csv(ad_vip_d.neg,"data/ad plsda vip_neg.csv")
 ```
 
 ```{r PLS analysis of BC using MetbcoAnalystR,include=FALSE}
@@ -249,50 +249,50 @@ bc_negMS2 <- bc_negMS2 %>% dplyr::select(sample,Label,everything()) %>% dplyr::s
 
 write.csv(bc_negMS2,"data/bc_negMS2.csv",row.names = F)
 
-bc_pls<-InitDataObjects("conc", "stat", TRUE)
-bc_pls<-Read.TextData(bc_pls, "data/bc_negMS2.csv", "rowp", "disc");
-bc_pls<-SanityCheckData(bc_pls)
-bc_pls<-ReplaceMin(bc_pls);
-bc_pls<-PreparePrenormData(bc_pls)
-bc_pls<-Normalization(bc_pls, "NULL", "NULL", "NULL", ratio=FALSE, ratioNum=20)
+bc_pls.neg<-InitDataObjects("conc", "stat", TRUE)
+bc_pls.neg<-Read.TextData(bc_pls.neg, "data/bc_negMS2.csv", "rowp", "disc");
+bc_pls.neg<-SanityCheckData(bc_pls.neg)
+bc_pls.neg<-ReplaceMin(bc_pls.neg);
+bc_pls.neg<-PreparePrenormData(bc_pls.neg)
+bc_pls.neg<-Normalization(bc_pls.neg, "NULL", "NULL", "NULL", ratio=FALSE, ratioNum=20)
 
-bc_pls<-PLSR.Anal(bc_pls, reg=TRUE)
+bc_pls.neg<-PLSR.Anal(bc_pls.neg, reg=TRUE)
 
-bc_pls<-PlotPLSPairSummary(bc_pls, "figure/MetaboAnalystR_PLSDA/bc pls summary_neg", "png", 72, width=NA, 5)
+bc_pls.neg<-PlotPLSPairSummary(bc_pls.neg, "figure/MetaboAnalystR_PLSDA/bc pls summary_neg", "png", 72, width=NA, 5)
 
-bc_pls<-PlotPLS2DScore(bc_pls, "figure/MetaboAnalystR_PLSDA/bc pls 2D score plot_neg", "png", 72, width=NA, 1,2,0.95,0,0)
+bc_pls.neg<-PlotPLS2DScore(bc_pls.neg, "figure/MetaboAnalystR_PLSDA/bc pls 2D score plot_neg", "png", 72, width=NA, 1,2,0.95,0,0)
 
-bc_pls<-PlotPLSLoading(bc_pls, "figure/MetaboAnalystR_PLSDA/bc pls loading_neg", "png", 72, width=NA, 1, 2);
+bc_pls.neg<-PlotPLSLoading(bc_pls.neg, "figure/MetaboAnalystR_PLSDA/bc pls loading_neg", "png", 72, width=NA, 1, 2);
 
-bc_pls<-PLSDA.CV(bc_pls, "T",5, "Q2")
-bc_pls<-PlotPLS.Classification(bc_pls, "figure/MetaboAnalystR_PLSDA/bc pls cross validation_neg", "png", 72, width=NA)
+bc_pls.neg<-PLSDA.CV(bc_pls.neg, "T",5, "Q2")
+bc_pls.neg<-PlotPLS.Classification(bc_pls.neg, "figure/MetaboAnalystR_PLSDA/bc pls cross validation_neg", "png", 72, width=NA)
 
-bc_pls_vip<-PlotPLS.Imp(bc_pls, "figure/MetaboAnalystR_PLSDA/bc pls_vip_neg", "png", 72, width=NA, "vip", "Comp. 1", 15,FALSE)
+bc_pls_vip.neg<-PlotPLS.Imp(bc_pls.neg, "figure/MetaboAnalystR_PLSDA/bc pls_vip_neg", "png", 72, width=NA, "vip", "Comp. 1", 15,FALSE)
 
-bc_vip <- bc_pls_vip$analSet$plsda$vip.mat
+bc_vip.neg <- bc_pls_vip.neg$analSet$plsda$vip.mat
 
-bc_vip_d <- as.data.frame(bc_vip)
-bc_vip_d <- dplyr::select(bc_vip_d,bc_vip_c1='Comp. 1')
+bc_vip_d.neg <- as.data.frame(bc_vip.neg)
+bc_vip_d.neg <- dplyr::select(bc_vip_d.neg,bc_vip_c1='Comp. 1')
 
-write.csv(bc_vip_d,"data/bc plsda vip_neg.csv")
+write.csv(bc_vip_d.neg,"data/bc plsda vip_neg.csv")
 ```
 
 
 
 ```{r PLSDA and time series based variable selection, include=F}
 library(tidyverse)
-timese_result <- timese_result %>% dplyr::select(-type) %>% add_rownames("mid")
-ac_vip_d <-rownames_to_column(ac_vip_d,"mid")
-ab_vip_d <- rownames_to_column(ab_vip_d,"mid")
-bc_vip_d <- rownames_to_column(bc_vip_d,"mid")
-pls_times_result_neg <- left_join(timese_result,ac_vip_d,by="mid")
-pls_times_result_neg <- left_join(pls_times_result_neg,ab_vip_d,by="mid")
-pls_times_result_neg <- left_join(pls_times_result_neg,bc_vip_d,by="mid")
+timese_result.neg <- timese_result.neg %>% dplyr::select(-type) %>% add_rownames("mid")
+ac_vip_d.neg <-rownames_to_column(ac_vip_d.neg,"mid")
+ab_vip_d.neg <- rownames_to_column(ab_vip_d.neg,"mid")
+bc_vip_d.neg <- rownames_to_column(bc_vip_d.neg,"mid")
+pls_times_result_neg <- left_join(timese_result.neg,ac_vip_d.neg,by="mid")
+pls_times_result_neg <- left_join(pls_times_result_neg,ab_vip_d.neg,by="mid")
+pls_times_result_neg <- left_join(pls_times_result_neg,bc_vip_d.neg,by="mid")
 write.csv(pls_times_result_neg,"data/PLSDA and time series results_neg.csv")
-pls.time.vip <- dplyr::filter(pls_times_result_neg,ac_vip_c1>2|ab_vip_c1>2|bc_vip_c1>2)
-
-pls.time.vip2 <- dplyr::filter(pls.time.vip,Hotelling.T2>99)
-write.csv(pls.time.vip,"data/metabolites VIP over 2.csv",row.names = F)
+pls.time.vip.neg <- dplyr::filter(pls_times_result_neg,ac_vip_c1>2|ab_vip_c1>2|bc_vip_c1>2)
+pls.time.vip.negAC <- dplyr::filter(pls_times_result_neg,ac_vip_c1>2)
+pls.time.vip2.neg <- dplyr::filter(pls.time.vip.neg,Hotelling.T2>99)
+write.csv(pls.time.vip.neg,"data/metabolites VIP over 2_neg.csv",row.names = F)
 ```
 
 
@@ -302,36 +302,39 @@ write.csv(pls.time.vip,"data/metabolites VIP over 2.csv",row.names = F)
 mstus_neg <- read.csv("data/mstus_neg.csv",stringsAsFactors = F,header = F)
 colnames(mstus_neg) <- mstus_neg[1,]
 mstus_neg <- as.data.frame(mstus_neg[-1,])
-mstus_col <- names(mstus_neg) %>% str_replace("X","")
-names(mstus_neg) <- mstus_col
+mstus_col.neg <- names(mstus_neg) %>% str_replace("X","")
+names(mstus_neg) <- mstus_col.neg
 mstus_neg <- dplyr::select(mstus_neg,-class)
 
 colnames(mstus_neg) <- neg_ms2$MS2.name[match(names(mstus_neg),neg_ms2$id)]
 
 
-colmstus <- names(mstus_neg)
-colmstus[is.na(colmstus)] <- "sample"
-names(mstus_neg) <- colmstus
+colmstus.neg <- names(mstus_neg)
+colmstus.neg[is.na(colmstus.neg)] <- "sample"
+names(mstus_neg) <- colmstus.neg
 mstus_neg <- mstus_neg %>% dplyr::arrange(sample)%>% dplyr::slice(-43,-44,-61,-62)
 mstus_neg$class <- rep(c("A diet","B diet","C diet","D diet"),times=c(16,16,16,16))
 mstus_neg <- dplyr::select(mstus_neg,sample,class,everything())
 
 mstusABC_neg <- dplyr::slice(mstus_neg,1:48)
 
-mid <- pls.time.vip$mid
+mid.neg <- pls.time.vip.neg$mid
 sampid <- mstusABC_neg$sample
 classid <- mstusABC_neg$class
 
-vip.file.neg <- mstusABC_neg[,colnames(mstusABC_neg)%in% mid]
+vip.file.neg <- mstusABC_neg[,colnames(mstusABC_neg)%in% mid.neg]
 vip.file.neg$sample <- sampid
 vip.file.neg$class <- classid
 
-
+rt_mz_neg <- neg_inf[neg_inf$MS2.name %in% mid.neg,]
+rt_mz_neg <- dplyr::rename(rt_mz_neg,mid=MS2.name)
+met_inf.neg <- left_join(rt_mz_neg,pls.time.vip.neg,by="mid")
+write.csv(met_inf.neg,"data/information of metabolites selected_neg.csv",row.names = F)
 
 vip.p.neg <- gather(vip.file.neg,key="mid",value = "Abundance",-sample,-class)
 
 ```
 
 library(tidyverse)
-p1 <- ggplot(data=vip.p.neg,mapping = aes(x=class,y=Abundance))+geom_boxplot()+facet_wrap(~mid,nrow = 4)
-p1+ylim(0,0.002)+xlab("Dietary pattern")+ggtitle("尿液代谢产物在不同膳食模式下的峰面积变化图1")+theme(plot.title=element_text(size=rel(1.5), lineheight=.9, hjust=0.5,family="Times"))
+p1 <- ggplot(data=vip.p.neg,mapping = aes(x=class,y=Abundance))+geom_boxplot()+facet_wrap(~mid,nrow = 3)+theme(strip.text.x = element_text(size = 20,family="Times"))
+p1+ylim(0,0.003)+xlab("Dietary pattern")+theme(text =element_text(size=20, lineheight=.9, hjust=0.5,family="Times"))
